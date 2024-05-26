@@ -101,6 +101,14 @@ ibl.overwrite{
     exclude = { filetypes = { 'python' } }
 }
 
+require('telescope').setup{
+    defaults = {
+        file_ignore_patterns = {
+            'node_modules'
+        }
+    }
+}
+
 -- Mappings
 vim.cmd([[
     nnoremap <leader>ff <cmd>Telescope find_files<cr>
