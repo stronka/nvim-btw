@@ -6,6 +6,8 @@ vim.cmd.syntax('enable')
 vim.cmd('inoremap jj <ESC>')
 vim.cmd('inoremap kk <ESC>')
 
+vim.opt.splitbelow = true
+vim.opt.cursorline = true
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -104,7 +106,7 @@ ibl.overwrite{
 require('telescope').setup{
     defaults = {
         file_ignore_patterns = {
-            'node_modules'
+            'node_modules',
         }
     }
 }
