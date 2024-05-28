@@ -30,8 +30,6 @@ Plug('nvim-lua/plenary.nvim')
 Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
 
 -- Colorschemes
-Plug('navarasu/onedark.nvim')
-Plug('catppuccin/nvim', { ['as'] = 'catppuccin'})
 Plug('rebelot/kanagawa.nvim')
 
 -- LSP stuff
@@ -74,9 +72,13 @@ require'mason-lspconfig'.setup({
         "jedi_language_server",
         "ruff_lsp",
         "tsserver",
-        "tailwindcss"
+        "tailwindcss",
+        "lua_ls"
     }
 })
+
+-- Lua
+lsp.lua_ls.setup(coq.lsp_ensure_capabilities())
 
 -- Python
 lsp.jedi_language_server.setup(coq.lsp_ensure_capabilities())
