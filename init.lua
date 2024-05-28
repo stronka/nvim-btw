@@ -64,16 +64,16 @@ local coq = require'coq'
 
 -- LSP
 local lsp = require'lspconfig'
-local configs = require('lspconfig/configs')
 
 require'mason'.setup()
 require'mason-lspconfig'.setup({
-    ensure_installed = { 
+    ensure_installed = {
         "jedi_language_server",
         "ruff_lsp",
         "tsserver",
         "tailwindcss",
-        "lua_ls"
+        "lua_ls",
+        "rust_analyzer"
     }
 })
 
@@ -94,6 +94,9 @@ vim.cmd([[
 
 lsp.tsserver.setup(coq.lsp_ensure_capabilities())
 lsp.tailwindcss.setup(coq.lsp_ensure_capabilities())
+
+-- Rust
+lsp.rust_analyzer.setup(coq.lsp_ensure_capabilities())
 
 -- Misc
 require('gitsigns').setup()
