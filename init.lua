@@ -1,4 +1,5 @@
 local vim = vim
+local uname = vim.loop.os_uname()
 
 -- General stuff
 vim.cmd.syntax('enable')
@@ -15,6 +16,8 @@ vim.opt.shiftwidth = 4
 vim.g.netrw_winsize = 25
 vim.g.netrw_keepdir = 0
 vim.g.netrw_banner = 0
+vim.g.netrw_liststyle=3
+vim.g.netrw_altv=1
 
 vim.opt.rnu=true
 vim.cmd('nnoremap - :set rnu!<CR>')
@@ -131,3 +134,14 @@ vim.cmd([[
 vim.cmd([[
     nnoremap <leader>v <cmd>CHADopen<cr>
 ]])
+
+if (uname.sysname:find 'Windows') 
+then 
+    vim.cmd( [[
+        let &shell = executable('pwsh') ? 'pwsh' : 'powershell'
+        let &shellcmdflag = '-NoLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues[''Out-File:Encoding'']=''utf8'';Remove-Alias -Force -ErrorAction SilentlyContinue tee;'
+        let &shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'
+        let &shellpipe  = '2>&1 | %%{ "$_" } | tee %s; exit $LastExitCode'
+        set shellquote= shellxquote=
+    ]])
+end
