@@ -7,6 +7,7 @@ vim.cmd.syntax('enable')
 vim.cmd('inoremap jj <ESC>')
 vim.cmd('inoremap kk <ESC>')
 vim.cmd('nnoremap <space> :')
+vim.cmd('nnoremap <space><space> :Ex<CR>')
 
 vim.opt.splitbelow = true
 vim.opt.cursorline = true
