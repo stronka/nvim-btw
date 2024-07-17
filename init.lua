@@ -27,7 +27,6 @@ vim.cmd('nnoremap - :set rnu!<CR>')
 vim.cmd('nnoremap = :set wrap!<CR>')
 vim.cmd('nnoremap // :set hls!<CR>')
 
-
 -- Tab navigation
 vim.cmd([[
     nnoremap <C-t><C-t> :tabnew<CR>
@@ -40,8 +39,14 @@ vim.cmd([[
 -- Buffer navigation
 vim.cmd([[
     nnoremap <C-b><C-b> :ls<CR>
+    nnoremap <C-b><C-j> :ls<CR>:b<space>
     nnoremap <C-b><C-[> :bp<CR>
     nnoremap <C-b><C-]> :bn<CR>
+]])
+
+-- Tmode navigation
+vim.cmd([[
+    tnoremap <C-t><C-t> <C-\><C-n>
 ]])
 
 vim.cmd('filetype plugin indent on')
