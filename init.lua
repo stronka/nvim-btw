@@ -6,6 +6,7 @@ vim.cmd.syntax('enable')
 
 vim.cmd('inoremap jj <ESC>')
 vim.cmd('inoremap kk <ESC>')
+vim.cmd('nnoremap <space> :')
 
 vim.opt.splitbelow = true
 vim.opt.cursorline = true
@@ -13,19 +14,39 @@ vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
-vim.g.netrw_winsize = 25
-vim.g.netrw_keepdir = 0
+vim.opt.wildmenu = true
+vim.opt.wildmode = "longest:full,full"
+
 vim.g.netrw_banner = 0
-vim.g.netrw_liststyle=3
-vim.g.netrw_altv=1
+vim.g.netrw_liststyle = 3
+vim.g.netrw_keepdir = 0
+vim.g.netrw_altv = 1
 
 vim.opt.rnu=true
 vim.cmd('nnoremap - :set rnu!<CR>')
-vim.cmd('nnoremap + :set wrap!<CR>')
+vim.cmd('nnoremap = :set wrap!<CR>')
 vim.cmd('nnoremap // :set hls!<CR>')
+
+
+-- Tab navigation
+vim.cmd([[
+    nnoremap <C-t><C-t> :tabnew<CR>
+    nnoremap <C-t><C-e> :tabe<space>
+    nnoremap <C-t><C-k> :tabc<CR>
+    nnoremap <C-t><C-[> :tabp<CR>
+    nnoremap <C-t><C-]> :tabn<CR>
+]])
+
+-- Buffer navigation
+vim.cmd([[
+    nnoremap <C-b><C-b> :ls<CR>
+    nnoremap <C-b><C-[> :bp<CR>
+    nnoremap <C-b><C-]> :bn<CR>
+]])
 
 vim.cmd('filetype plugin indent on')
 
+-- PLUGIN CONFIG SECTION
 local Plug = vim.fn['plug#']
 
 vim.call('plug#begin')
@@ -41,6 +62,7 @@ Plug('williamboman/mason-lspconfig.nvim')
 Plug('neovim/nvim-lspconfig')
 
 --  ms-jpq
+--  This is autocompletion (coq) and tree navigation (chadtree)
 Plug('ms-jpq/coq_nvim', { ['branch'] = 'coq' })
 Plug('ms-jpq/coq.artifacts', { ['branch'] = 'artifacts' })
 Plug('ms-jpq/chadtree', { ['branch'] = 'chad', ['do'] = 'python 3 -m chadtree deps' })
@@ -93,6 +115,7 @@ vim.cmd([[
     autocmd FileType javascriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType typescript setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
+    autocmd FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
 ]])
 
 lsp.tsserver.setup(coq.lsp_ensure_capabilities())
@@ -135,8 +158,8 @@ vim.cmd([[
     nnoremap <leader>v <cmd>CHADopen<cr>
 ]])
 
-if (uname.sysname:find 'Windows') 
-then 
+if (uname.sysname:find 'Windows')
+then
     vim.cmd( [[
         let &shell = executable('pwsh') ? 'pwsh' : 'powershell'
         let &shellcmdflag = '-NoLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues[''Out-File:Encoding'']=''utf8'';Remove-Alias -Force -ErrorAction SilentlyContinue tee;'
@@ -145,3 +168,4 @@ then
         set shellquote= shellxquote=
     ]])
 end
+-- END OF PLUGIN SECTION
