@@ -14,19 +14,31 @@ vim.opt.cursorline = true
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+vim.opt.rnu=true
 
 vim.opt.wildmenu = true
 vim.opt.wildmode = "longest:full,full"
 
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
-vim.g.netrw_keepdir = 0
 vim.g.netrw_altv = 1
 
-vim.opt.rnu=true
+vim.cmd('filetype plugin indent on')
+
+-- Some toggles
 vim.cmd('nnoremap - :set rnu!<CR>')
 vim.cmd('nnoremap = :set wrap!<CR>')
 vim.cmd('nnoremap // :set hls!<CR>')
+
+-- Window navigation
+vim.cmd([[
+    nnoremap <C-w><C-o> :only<CR>
+    nnoremap <C-w><C-p> :vsp<CR>
+    nnoremap <C-w><C-n> :sp<CR>
+    nnoremap <C-w><C-k> :q<CR>
+    nnoremap <C-w><C-[> <C-w>h
+    nnoremap <C-w><C-]> <C-w>l
+]])
 
 -- Tab navigation
 vim.cmd([[
@@ -41,8 +53,18 @@ vim.cmd([[
 vim.cmd([[
     nnoremap <C-b><C-b> :ls<CR>
     nnoremap <C-b><C-j> :ls<CR>:b<space>
+    nnoremap <C-b><C-k> :ls<CR>:bdelete<space>
     nnoremap <C-b><C-[> :bp<CR>
     nnoremap <C-b><C-]> :bn<CR>
+]])
+
+-- Quickfix list navigation
+vim.cmd([[
+    nnoremap <M-F7> yiw:grep<space><C-r>"<space>
+    nnoremap <C-l><C-l> :copen<CR>
+    nnoremap <C-l><C-k> :cclose<CR>
+    nnoremap <C-l><C-[> :cp<CR>
+    nnoremap <C-l><C-]> :cn<CR>
 ]])
 
 -- Tmode navigation
@@ -50,7 +72,15 @@ vim.cmd([[
     tnoremap <C-t><C-t> <C-\><C-n>
 ]])
 
-vim.cmd('filetype plugin indent on')
+-- Matching parenteses
+vim.cmd([[
+    inoremap ( ()<Left>
+    inoremap { {}<Left>
+    inoremap [ []<Left>
+    inoremap < <><Left>
+    inoremap ' ''<Left>
+    inoremap " ""<Left>
+]])
 
 -- PLUGIN CONFIG SECTION
 local Plug = vim.fn['plug#']
