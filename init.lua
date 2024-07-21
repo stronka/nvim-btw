@@ -25,6 +25,8 @@ vim.g.netrw_altv = 1
 
 vim.cmd('filetype plugin indent on')
 
+vim.grepprg = "rg --vimgrep --no-heading --smart-case"
+
 -- Some toggles
 vim.cmd('nnoremap - :set rnu!<CR>')
 vim.cmd('nnoremap = :set wrap!<CR>')
@@ -63,8 +65,8 @@ vim.cmd([[
     nnoremap <M-F7> yiw:grep<space><C-r>"<space>
     nnoremap <C-l><C-l> :copen<CR>
     nnoremap <C-l><C-k> :cclose<CR>
-    nnoremap <C-l><C-[> :cp<CR>
-    nnoremap <C-l><C-]> :cn<CR>
+    nnoremap <C-l><C-[> :cprevious<CR>
+    nnoremap <C-l><C-]> :cnext<CR>
 ]])
 
 -- Tmode navigation
