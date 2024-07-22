@@ -30,13 +30,16 @@ vim.grepprg = "rg --vimgrep --no-heading --smart-case"
 -- Some toggles
 vim.cmd('nnoremap - :set rnu!<CR>')
 vim.cmd('nnoremap = :set wrap!<CR>')
+-- TODO: don't ike it stealing the focus from the first slash, think of other shortcut
 vim.cmd('nnoremap // :set hls!<CR>')
 
 -- Window navigation
 vim.cmd([[
     nnoremap <C-w><C-o> :only<CR>
-    nnoremap <C-w><C-p> :vsp<CR>
-    nnoremap <C-w><C-n> :sp<CR>
+    nnoremap <C-w><C-n> <C-w>j
+    nnoremap <C-w><C-p> <C-w>k
+    nnoremap <C-w><C-s> :sp<CR>
+    nnoremap <C-w><C-v> :vsp<CR>
     nnoremap <C-w><C-k> :q<CR>
     nnoremap <C-w><C-[> <C-w>h
     nnoremap <C-w><C-]> <C-w>l
@@ -61,8 +64,9 @@ vim.cmd([[
 ]])
 
 -- Quickfix list navigation
+-- M-F7 obsolete with the refactor.nvim plugin, search to replace
 vim.cmd([[
-    nnoremap <M-F7> yiw:grep<space><C-r>"<space>
+    nnoremap <M-F7> yiw:grep<space><C-r>"<space> 
     nnoremap <C-l><C-l> :copen<CR>
     nnoremap <C-l><C-k> :cclose<CR>
     nnoremap <C-l><C-[> :cprevious<CR>
@@ -74,13 +78,16 @@ vim.cmd([[
     tnoremap <C-t><C-t> <C-\><C-n>
 ]])
 
+-- TODO: add oldfiles navigation
+-- can you do it with telescope?
+
 -- Matching parenteses
+-- don't duplicate ' since it's annoying when writing english
 vim.cmd([[
     inoremap ( ()<Left>
     inoremap { {}<Left>
     inoremap [ []<Left>
     inoremap < <><Left>
-    inoremap ' ''<Left>
     inoremap " ""<Left>
 ]])
 
@@ -92,6 +99,7 @@ Plug('nvim-lua/plenary.nvim')
 Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
 
 -- Colorschemes
+-- TODO: I don't need plugin themes, create one of my own
 Plug('rebelot/kanagawa.nvim')
 
 -- LSP stuff
@@ -101,19 +109,26 @@ Plug('neovim/nvim-lspconfig')
 
 --  ms-jpq
 --  This is autocompletion (coq) and tree navigation (chadtree)
+--  TODO: I don't like chadtree, probably will need to replace
+--  TODO: coq is good but may be more than I actually need
 Plug('ms-jpq/coq_nvim', { ['branch'] = 'coq' })
 Plug('ms-jpq/coq.artifacts', { ['branch'] = 'artifacts' })
 Plug('ms-jpq/chadtree', { ['branch'] = 'chad', ['do'] = 'python 3 -m chadtree deps' })
 
 -- Python
 Plug('michaeljsmith/vim-indent-object')
+-- TODO: Don't think this one works - remove
 Plug('averms/black-nvim', { ['do'] = ':UpdateRemotePlugins' })
 
 -- Miscellanous
 Plug('lewis6991/gitsigns.nvim')
 Plug('nvim-lualine/lualine.nvim')
 Plug('lukas-reineke/indent-blankline.nvim')
+-- TODO: might not need this one
 Plug('ryanoasis/vim-devicons')
+
+-- Mine
+Plug("~/src/refactor.nvim/")
 
 vim.call('plug#end')
 
@@ -179,6 +194,9 @@ require('telescope').setup{
         }
     }
 }
+
+-- Mine
+require('refactor').setup()
 
 -- Mappings
 vim.cmd([[
