@@ -92,6 +92,7 @@ vim.cmd([[
 ]])
 
 -- PLUGIN CONFIG SECTION
+-- TODO: can I lock all plugin versions? or better yet - do it by default?
 local Plug = vim.fn['plug#']
 
 vim.call('plug#begin')
