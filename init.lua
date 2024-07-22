@@ -91,6 +91,10 @@ vim.cmd([[
     inoremap " ""<Left>
 ]])
 
+-- TODO: org mode is a bloat, but it's a nice idea!
+-- I could write my own plugin that does the same, but using markdown
+-- Could I integrate browsing notes with telescope?
+
 -- PLUGIN CONFIG SECTION
 -- TODO: can I lock all plugin versions? or better yet - do it by default?
 local Plug = vim.fn['plug#']
