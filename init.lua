@@ -4,17 +4,18 @@ local uname = vim.loop.os_uname()
 -- General stuff
 vim.cmd.syntax('enable')
 
-vim.cmd('inoremap jj <ESC>')
-vim.cmd('inoremap kk <ESC>')
 vim.cmd('nnoremap <space> :')
-vim.cmd('nnoremap <space><space> :Ex<CR>')
+vim.cmd('nnoremap <space><space> :NERDTreeFocus<CR>')
+vim.cmd('nnoremap <F4> :e %:h<CR>')
 
 vim.opt.splitbelow = true
 vim.opt.cursorline = true
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
-vim.opt.rnu=true
+vim.opt.number = true
+vim.opt.rnu = true
+vim.opt.updatetime = 250
 
 vim.opt.wildmenu = true
 vim.opt.wildmode = "longest:full,full"
@@ -22,6 +23,7 @@ vim.opt.wildmode = "longest:full,full"
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
 vim.g.netrw_altv = 1
+vim.g.netrw_keepdir = 1
 
 vim.cmd('filetype plugin indent on')
 
@@ -30,66 +32,21 @@ vim.grepprg = "rg --vimgrep --no-heading --smart-case"
 -- Some toggles
 vim.cmd('nnoremap - :set rnu!<CR>')
 vim.cmd('nnoremap = :set wrap!<CR>')
--- TODO: don't ike it stealing the focus from the first slash, think of other shortcut
-vim.cmd('nnoremap // :set hls!<CR>')
 
 -- Window navigation
-vim.cmd([[
-    nnoremap <C-w><C-o> :only<CR>
-    nnoremap <C-w><C-n> <C-w>j
-    nnoremap <C-w><C-p> <C-w>k
-    nnoremap <C-w><C-s> :sp<CR>
-    nnoremap <C-w><C-v> :vsp<CR>
-    nnoremap <C-w><C-k> :q<CR>
-    nnoremap <C-w><C-[> <C-w>h
-    nnoremap <C-w><C-]> <C-w>l
-]])
-
--- Tab navigation
-vim.cmd([[
-    nnoremap <C-t><C-t> :tabnew<CR>
-    nnoremap <C-t><C-e> :tabe<space>
-    nnoremap <C-t><C-k> :tabc<CR>
-    nnoremap <C-t><C-[> :tabp<CR>
-    nnoremap <C-t><C-]> :tabn<CR>
-]])
-
--- Buffer navigation
-vim.cmd([[
-    nnoremap <C-b><C-b> :ls<CR>
-    nnoremap <C-b><C-j> :ls<CR>:b<space>
-    nnoremap <C-b><C-k> :ls<CR>:bdelete<space>
-    nnoremap <C-b><C-[> :bp<CR>
-    nnoremap <C-b><C-]> :bn<CR>
-]])
-
--- Quickfix list navigation
--- M-F7 obsolete with the refactor.nvim plugin, search to replace
-vim.cmd([[
-    nnoremap <M-F7> yiw:grep<space><C-r>"<space> 
-    nnoremap <C-l><C-l> :copen<CR>
-    nnoremap <C-l><C-k> :cclose<CR>
-    nnoremap <C-l><C-[> :cprevious<CR>
-    nnoremap <C-l><C-]> :cnext<CR>
-]])
-
--- Tmode navigation
-vim.cmd([[
-    tnoremap <C-t><C-t> <C-\><C-n>
-]])
+require('navigation').setup()
 
 -- TODO: add oldfiles navigation
 -- can you do it with telescope?
 
--- Matching parenteses
+-- Matching parenteses - not sure I like it
 -- don't duplicate ' since it's annoying when writing english
-vim.cmd([[
-    inoremap ( ()<Left>
-    inoremap { {}<Left>
-    inoremap [ []<Left>
-    inoremap < <><Left>
-    inoremap " ""<Left>
-]])
+-- vim.cmd([[
+--     inoremap ( ()<Left>
+--     inoremap { {}<Left>
+--     inoremap [ []<Left>
+--     inoremap " ""<Left>
+-- ]])
 
 -- TODO: org mode is a bloat, but it's a nice idea!
 -- I could write my own plugin that does the same, but using markdown
@@ -103,9 +60,10 @@ vim.call('plug#begin')
 Plug('nvim-lua/plenary.nvim')
 Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
 
--- Colorschemes
+-- General purpose stuff
 -- TODO: I don't need plugin themes, create one of my own
 Plug('rebelot/kanagawa.nvim')
+Plug('preservim/nerdtree')
 
 -- LSP stuff
 Plug('williamboman/mason.nvim')
@@ -113,17 +71,13 @@ Plug('williamboman/mason-lspconfig.nvim')
 Plug('neovim/nvim-lspconfig')
 
 --  ms-jpq
---  This is autocompletion (coq) and tree navigation (chadtree)
---  TODO: I don't like chadtree, probably will need to replace
+--  This is autocompletion (coq)
 --  TODO: coq is good but may be more than I actually need
 Plug('ms-jpq/coq_nvim', { ['branch'] = 'coq' })
 Plug('ms-jpq/coq.artifacts', { ['branch'] = 'artifacts' })
-Plug('ms-jpq/chadtree', { ['branch'] = 'chad', ['do'] = 'python 3 -m chadtree deps' })
 
 -- Python
 Plug('michaeljsmith/vim-indent-object')
--- TODO: Don't think this one works - remove
-Plug('averms/black-nvim', { ['do'] = ':UpdateRemotePlugins' })
 
 -- Miscellanous
 Plug('lewis6991/gitsigns.nvim')
@@ -133,7 +87,7 @@ Plug('lukas-reineke/indent-blankline.nvim')
 Plug('ryanoasis/vim-devicons')
 
 -- Mine
-Plug("~/src/refactor.nvim/")
+-- Plug("~/src/refactor.nvim/")
 
 vim.call('plug#end')
 
@@ -160,6 +114,10 @@ require'mason-lspconfig'.setup({
     }
 })
 
+vim.cmd([[
+    autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+]])
+
 -- Lua
 lsp.lua_ls.setup(coq.lsp_ensure_capabilities())
 
@@ -167,13 +125,19 @@ lsp.lua_ls.setup(coq.lsp_ensure_capabilities())
 lsp.jedi_language_server.setup(coq.lsp_ensure_capabilities())
 lsp.ruff_lsp.setup(coq.lsp_ensure_capabilities())
 
+vim.cmd([[
+    autocmd FileType python set shiftwidth=4 tabstop=4 softtabstop=4 expandtab autoindent fileformat=unix
+]])
 -- JS
 vim.cmd([[
+    autocmd BufRead,BufNewFile *.json set filetype=json
+    autocmd FileType json setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType javascriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType typescript setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
+    autocmd BufWritePost *.{js,jsx,ts,tsx} silent !npx prettier <afile> --write
 ]])
 
 lsp.tsserver.setup(coq.lsp_ensure_capabilities())
@@ -201,7 +165,7 @@ require('telescope').setup{
 }
 
 -- Mine
-require('refactor').setup()
+-- require('refactor').setup()
 
 -- Mappings
 vim.cmd([[
@@ -215,10 +179,6 @@ vim.cmd([[
     nnoremap <leader>fs <cmd>Telescope lsp_document_symbols<cr>
 ]])
 
-vim.cmd([[
-    nnoremap <leader>v <cmd>CHADopen<cr>
-]])
-
 if (uname.sysname:find 'Windows')
 then
     vim.cmd( [[
@@ -230,3 +190,16 @@ then
     ]])
 end
 -- END OF PLUGIN SECTION
+
+-- LaTeX
+vim.cmd([[
+    autocmd BufWritePost *.tex silent !mkdir -p output && pdflatex --output-directory=output <afile>
+    autocmd FileType tex setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
+]])
+
+-- BC
+-- Calculate line
+vim.cmd([[
+    nnoremap <leader>cl VyV:!bc -l<esc>0PJa=<space><esc>
+]])
+
