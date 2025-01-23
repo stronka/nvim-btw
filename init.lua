@@ -7,21 +7,7 @@ vim.cmd.syntax('enable')
 vim.cmd('nnoremap <space> :')
 vim.cmd('nnoremap <F4> :e %:h<CR>')
 
-local is_sidebar_visible = false;
-
-vim.keymap.set(
-    'n',
-    '<space><space>',
-    function ()
-        if not is_sidebar_visible then
-            vim.api.nvim_command('NERDTreeFocus')
-            is_sidebar_visible = true
-        else
-            vim.api.nvim_command('NERDTreeClose')
-            is_sidebar_visible = false
-        end
-    end
-)
+vim.keymap.set('n', '<leader>tt', function() vim.api.nvim_command('NERDTreeFind') end)
 
 vim.opt.splitbelow = true
 vim.opt.cursorline = true
@@ -48,8 +34,9 @@ vim.grepprg = "rg --vimgrep --no-heading --smart-case"
 vim.cmd('nnoremap - :set rnu!<CR>')
 vim.cmd('nnoremap = :set wrap!<CR>')
 
--- Window navigation
+-- Window & sidebar navigation
 require('navigation').setup()
+require('sidebar').setup()
 
 -- TODO: add oldfiles navigation
 -- can you do it with telescope?
