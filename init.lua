@@ -5,8 +5,23 @@ local uname = vim.loop.os_uname()
 vim.cmd.syntax('enable')
 
 vim.cmd('nnoremap <space> :')
-vim.cmd('nnoremap <space><space> :NERDTreeFocus<CR>')
 vim.cmd('nnoremap <F4> :e %:h<CR>')
+
+local is_sidebar_visible = false;
+
+vim.keymap.set(
+    'n',
+    '<space><space>',
+    function ()
+        if not is_sidebar_visible then
+            vim.api.nvim_command('NERDTreeFocus')
+            is_sidebar_visible = true
+        else
+            vim.api.nvim_command('NERDTreeClose')
+            is_sidebar_visible = false
+        end
+    end
+)
 
 vim.opt.splitbelow = true
 vim.opt.cursorline = true
@@ -176,6 +191,7 @@ vim.keymap.set('n', '<leader>fh', telescope_builtin.help_tags, {})
 vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, {})
 vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, {})
 vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, {})
+
 
 -- Mine
 -- require('refactor').setup()
