@@ -156,7 +156,8 @@ ibl.overwrite{
     exclude = { filetypes = { 'python' } }
 }
 
-require('telescope').setup{
+local telescope = require('telescope')
+telescope.setup{
     defaults = {
         file_ignore_patterns = {
             'node_modules',
@@ -164,20 +165,20 @@ require('telescope').setup{
     }
 }
 
--- Mine
--- require('refactor').setup()
+local telescope_builtin = require('telescope.builtin')
 
 -- Mappings
-vim.cmd([[
-    nnoremap <leader>ff <cmd>Telescope find_files<cr>
+vim.keymap.set('n', '<leader>fm', telescope_builtin.marks, {})
+vim.keymap.set('n', '<leader>fk', telescope_builtin.keymaps, {})
+vim.keymap.set('n', '<leader>fs', telescope_builtin.lsp_document_symbols, {})
+vim.keymap.set('n', '<leader>fr', telescope_builtin.lsp_references, {})
+vim.keymap.set('n', '<leader>fh', telescope_builtin.help_tags, {})
+vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, {})
+vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, {})
+vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, {})
 
-    nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-    nnoremap <leader>fb <cmd>Telescope buffers<cr>
-    nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-
-    nnoremap <leader>fr <cmd>Telescope lsp_references<cr>
-    nnoremap <leader>fs <cmd>Telescope lsp_document_symbols<cr>
-]])
+-- Mine
+-- require('refactor').setup()
 
 if (uname.sysname:find 'Windows')
 then
