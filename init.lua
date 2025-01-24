@@ -28,7 +28,12 @@ vim.g.netrw_keepdir = 1
 
 vim.cmd('filetype plugin indent on')
 
-vim.grepprg = "rg --vimgrep --no-heading --smart-case"
+vim.opt.grepprg = "rg --vimgrep --no-heading --smart-case"
+
+vim.keymap.set('n', '<leader>qe', function()
+    -- for quickfix edits
+    vim.opt_local.errorformat = "%f|%l col %c|%m"
+end)
 
 -- Some toggles
 vim.cmd('nnoremap - :set rnu!<CR>')
