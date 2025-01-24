@@ -7,8 +7,6 @@ vim.cmd.syntax('enable')
 vim.cmd('nnoremap <space> :')
 vim.cmd('nnoremap <F4> :e %:h<CR>')
 
-vim.keymap.set('n', '<leader>tt', function() vim.api.nvim_command('NERDTreeFind') end)
-
 vim.opt.splitbelow = true
 vim.opt.cursorline = true
 vim.opt.expandtab = true
