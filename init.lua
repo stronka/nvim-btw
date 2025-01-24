@@ -40,6 +40,7 @@ vim.cmd('nnoremap = :set wrap!<CR>')
 -- Window & sidebar navigation
 require('navigation').setup()
 require('sidebar').setup()
+require('refactor').setup()
 
 -- TODO: add oldfiles navigation
 -- can you do it with telescope?
@@ -90,9 +91,6 @@ Plug('nvim-lualine/lualine.nvim')
 Plug('lukas-reineke/indent-blankline.nvim')
 -- TODO: might not need this one
 Plug('ryanoasis/vim-devicons')
-
--- Mine
--- Plug("~/src/refactor.nvim/")
 
 vim.call('plug#end')
 
@@ -184,7 +182,6 @@ vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, {})
 
 
 -- Mine
--- require('refactor').setup()
 
 if (uname.sysname:find 'Windows')
 then
