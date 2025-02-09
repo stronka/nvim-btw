@@ -41,6 +41,7 @@ vim.cmd('nnoremap = :set wrap!<CR>')
 require('navigation').setup()
 require('sidebar').setup()
 require('refactor').setup()
+require('makefile').setup()
 
 -- TODO: add oldfiles navigation
 -- can you do it with telescope?
