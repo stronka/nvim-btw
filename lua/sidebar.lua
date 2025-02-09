@@ -54,6 +54,14 @@ M.setup = function ()
             vim.api.nvim_command('NERDTreeCWD')
         end
     )
+
+    vim.keymap.set(
+        'n',
+        '<F4>',
+        function()
+            vim.cmd('e %:h')
+        end
+    )
 end
 
 return M
