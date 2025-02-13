@@ -54,19 +54,36 @@ local run_compilation = function()
         vim.api.nvim_buf_set_lines(buf, -1, -1, false, split_string(data, "[^\r\n]+"))
     end
 
-    vim.system(split_string(compile_cmd, "[^ ]+"), {
-        text = true,
-        stdout = vim.schedule_wrap(function(_, data)
-            update_buffer(data)
-        end),
-        stderr = vim.schedule_wrap(function(_, data)
-            update_buffer(data)
-        end),
-        on_exit = vim.schedule_wrap(function()
-            vim.api.nvim_buf_set_option(buf, 'readonly', true)
+    local run = function()
+        local stdout = vim.uv.new_pipe()
+        local stderr = vim.uv.new_pipe()
+
+        local handle
+        handle, _ = vim.uv.spawn(compile_cmd, {
+            stdio = { nil, stdout, stderr }
+        }, function(code, _)
+            vim.schedule(function()
+                vim.api.nvim_buf_set_lines(buf, -1, -1, false, {"[Compilation process finished wihth " .. code .. "]"})
+                vim.api.nvim_buf_set_option(buf, 'readonly', true)
+            end)
+
+            stdout:close()
+            stderr:close()
+            handle:close()
         end)
-    })
+
+        vim.uv.read_start(stdout, vim.schedule_wrap(function(err, data)
+            update_buffer(data)
+        end))
+
+        vim.uv.read_start(stderr, vim.schedule_wrap(function(err, data)
+            update_buffer(data)
+        end))
+    end
+
+    run()
 end
+
 
 local compile = function()
     vim.ui.input({ prompt = 'Compile: ', default = compile_cmd }, function(input)
