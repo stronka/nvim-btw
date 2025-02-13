@@ -58,12 +58,16 @@ local run_compilation = function()
         local stdout = vim.uv.new_pipe()
         local stderr = vim.uv.new_pipe()
 
+        local cmd_table = split_string(compile_cmd, "[^ ]+")
+        local cmd, args = cmd_table[1], { table.unpack(cmd_table, 2) }
+
         local handle
-        handle, _ = vim.uv.spawn(compile_cmd, {
+        handle, _ = vim.uv.spawn(cmd, {
+            args = args,
             stdio = { nil, stdout, stderr }
         }, function(code, _)
             vim.schedule(function()
-                vim.api.nvim_buf_set_lines(buf, -1, -1, false, {"[Compilation process finished wihth " .. code .. "]"})
+                vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Compilation process finished with ' .. code .. ']'})
                 vim.api.nvim_buf_set_option(buf, 'readonly', true)
             end)
 
@@ -72,16 +76,17 @@ local run_compilation = function()
             handle:close()
         end)
 
-        vim.uv.read_start(stdout, vim.schedule_wrap(function(err, data)
+        vim.uv.read_start(stdout, vim.schedule_wrap(function(_, data)
             update_buffer(data)
         end))
 
-        vim.uv.read_start(stderr, vim.schedule_wrap(function(err, data)
+        vim.uv.read_start(stderr, vim.schedule_wrap(function(_, data)
             update_buffer(data)
         end))
     end
 
     run()
+
 end
 
 
@@ -118,7 +123,6 @@ M.setup = function()
     )
 end
 
-M.setup()
 return M
 
 
