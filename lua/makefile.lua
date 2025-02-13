@@ -69,7 +69,7 @@ local run_compilation = function()
 end
 
 local compile = function()
-    vim.ui.input({ prompt = 'Compile: ' }, function(input)
+    vim.ui.input({ prompt = 'Compile: ', default = compile_cmd }, function(input)
         compile_cmd = input
         run_compilation()
     end)
@@ -101,6 +101,7 @@ M.setup = function()
     )
 end
 
+M.setup()
 return M
 
 
