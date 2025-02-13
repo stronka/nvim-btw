@@ -4,7 +4,7 @@ local vim = vim
 M.setup = function()
     vim.keymap.set(
         'n',
-        '<F9>',
+        '<F8>',
         function()
             vim.cmd('make')
         end
@@ -12,7 +12,7 @@ M.setup = function()
 
     vim.keymap.set(
         'n',
-        '<F10>',
+        '<F9>',
         function()
             vim.cmd('make run')
         end
