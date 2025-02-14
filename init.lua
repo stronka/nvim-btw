@@ -37,7 +37,7 @@ end)
 vim.cmd('nnoremap - :set rnu!<CR>')
 vim.cmd('nnoremap = :set wrap!<CR>')
 
--- Window & sidebar navigation
+-- My stuff
 require('navigation').setup()
 require('sidebar').setup()
 require('refactor').setup()
@@ -71,6 +71,7 @@ Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
 -- TODO: I don't need plugin themes, create one of my own
 Plug('rebelot/kanagawa.nvim')
 Plug('preservim/nerdtree')
+Plug('easymotion/vim-easymotion')
 
 -- LSP stuff
 Plug('williamboman/mason.nvim')
@@ -108,6 +109,21 @@ require("telescope").setup()
 
 vim.g.coq_settings = { ['auto_start'] = 'shut-up' }
 local coq = require'coq'
+
+-- Enable case-sensitive search
+local easymotion_setup = function ()
+    vim.g.EasyMotion_smartcase = 1
+    vim.api.nvim_set_keymap('n', '<Leader><Leader>w', '<Plug>(easymotion-bd-w)', {})
+    vim.api.nvim_set_keymap('n', 's', '<Plug>(easymotion-s)', {})
+    vim.api.nvim_set_keymap('n', '<Leader>w', '<Plug>(easymotion-w)', {})
+    vim.api.nvim_set_keymap('n', '<Leader>b', '<Plug>(easymotion-b)', {})
+    vim.api.nvim_set_keymap('n', '<Leader>f', '<Plug>(easymotion-f)', {})
+    vim.api.nvim_set_keymap('n', '<Leader>t', '<Plug>(easymotion-t)', {})
+    vim.api.nvim_set_keymap('n', '<Leader>l', '<Plug>(easymotion-j)', {})
+    vim.api.nvim_set_keymap('n', '<Leader>h', '<Plug>(easymotion-k)', {})
+end
+
+easymotion_setup()
 
 -- LSP
 local lsp = require'lspconfig'
