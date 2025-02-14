@@ -5,7 +5,6 @@ local uname = vim.loop.os_uname()
 vim.cmd.syntax('enable')
 
 vim.cmd('nnoremap <space> :')
-vim.cmd('nnoremap <F4> :e %:h<CR>')
 
 vim.opt.splitbelow = true
 vim.opt.cursorline = true
@@ -174,7 +173,15 @@ lsp.rust_analyzer.setup(coq.lsp_ensure_capabilities())
 
 -- Version control
 require('gitsigns').setup()
-require('neogit').setup{}
+local neogit = require('neogit')
+
+local neogit_setup = function ()
+    neogit.setup{}
+    vim.keymap.set('n', '<F5>', neogit.open)
+end
+
+neogit_setup()
+
 
 require('lualine').setup()
 

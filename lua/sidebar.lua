@@ -62,6 +62,14 @@ M.setup = function ()
             vim.cmd('e %:h')
         end
     )
+
+    vim.keymap.set(
+        'n',
+        '<F3>',
+        function()
+            vim.cmd('tcd %:h')
+        end
+    )
 end
 
 return M
