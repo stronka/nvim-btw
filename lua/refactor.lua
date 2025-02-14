@@ -26,6 +26,15 @@ M.setup = function()
         '<C-k>',
         duplicate_line_backwards
     )
+
+    vim.keymap.set(
+        'n',
+        '<C-y>',
+        function()
+            vim.cmd('normal! "*p')
+        end
+    )
 end
+
 
 return M
