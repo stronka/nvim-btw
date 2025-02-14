@@ -86,8 +86,11 @@ Plug('ms-jpq/coq.artifacts', { ['branch'] = 'artifacts' })
 -- Python
 Plug('michaeljsmith/vim-indent-object')
 
--- Miscellanous
+-- Version control
 Plug('lewis6991/gitsigns.nvim')
+Plug('NeogitOrg/neogit')
+
+-- Miscellanous
 Plug('nvim-lualine/lualine.nvim')
 Plug('lukas-reineke/indent-blankline.nvim')
 -- TODO: might not need this one
@@ -153,8 +156,10 @@ lsp.tailwindcss.setup(coq.lsp_ensure_capabilities())
 -- Rust
 lsp.rust_analyzer.setup(coq.lsp_ensure_capabilities())
 
--- Misc
+-- Version control
 require('gitsigns').setup()
+require('neogit').setup{}
+
 require('lualine').setup()
 
 local ibl = require('ibl')
