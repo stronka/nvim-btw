@@ -37,8 +37,8 @@ M.setup = function()
         nnoremap <M-F7> yiw:grep<space><C-r>"<space> 
         nnoremap <C-l><C-l> :copen<CR>
         nnoremap <C-l><C-k> :cclose<CR>
-        nnoremap <C-l><C-[> :cprevious<CR>
-        nnoremap <C-l><C-]> :cnext<CR>
+        nnoremap <C-l><C-p> :cprevious<CR>
+        nnoremap <C-l><C-n> :cnext<CR>
     ]])
 
     -- Tmode navigation

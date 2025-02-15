@@ -3,22 +3,32 @@ local M = {}
 local vim = vim
 local api = vim.api
 
+local file = "([^%s^%[^%]]*%.[a-zA-Z0-9]+)"
+local line = "(%d+)"
+local error_message_pattern = "^" .. file .. "[^%d]*" .. line
+
 local compile_cmd = 'make -k'
 local compile_command_history = {}
 
 local result_window = -1
 local suggest_win = -1
 local input_win = -1
-local title_win = -1
+local input_backdrop_win = -1
 
 local buf = -1
 local input_buf = -1
-local title_buf = -1
+local input_backdrop_buf = -1
 local suggest_buf = -1
+
+local abort_augroup_id = nil
+local abort_input_augroup_id = nil
 
 -- TODO pipe is not handled!
 -- TODO handle terminal output
--- TODO parse paths to quickfix
+-- TODO hide the suggestion box if filtered_choices are zero
+-- TODO create own higlight group for window backgrounds 
+-- TODO dedupe quickfix and do other improvements
+-- TODO quickfix capture message and inline it in the file if possible?
 
 local split_string = function(str, pattern)
     if rawequal(str, nil) then
@@ -45,14 +55,16 @@ local spawn_windows = function(window_opts)
 
     for _, w in ipairs(window_opts) do
         local new_window = api.nvim_open_win(0, w.enter, w.opts)
-
         local new_buf = api.nvim_create_buf(false, true)
 
         for _, b in ipairs(w.buf_opts) do
             api.nvim_buf_set_option(new_buf, b[1], b[2])
         end
-
         api.nvim_win_set_buf(new_window, new_buf)
+        api.nvim_set_option_value('winhighlight', 'NormalFloat:Normal,FloatBorder:NonText,FloatTitle:NonText', {
+            scope = 'local',
+            win = new_window
+        })
         table.insert(result, { window = new_window, buf = new_buf })
     end
 
@@ -61,12 +73,12 @@ end
 
 local close_windows = function(windows)
     for _, w in ipairs(windows) do
-        if api.nvim_win_is_valid(w) then
+        if w ~= -1 and api.nvim_win_is_valid(w) then
             local b = api.nvim_win_get_buf(w)
 
             api.nvim_win_close(w, true)
 
-            if api.nvim_buf_is_valid(b) then
+            if b ~= -1 and api.nvim_buf_is_valid(b) then
                 api.nvim_buf_delete(b, { force = true })
             end
         end
@@ -74,28 +86,37 @@ local close_windows = function(windows)
 end
 
 local close_all_windows = function()
-    close_windows{ result_window, input_win, suggest_win, title_win }
+    close_windows{ result_window, input_win, suggest_win, input_backdrop_win }
 
     result_window = -1
     suggest_win = -1
     input_win = -1
-    title_win = -1
+    input_backdrop_win = -1
 
     buf = -1
     input_buf = -1
-    title_buf = -1
     suggest_buf = -1
+    input_backdrop_buf = -1
+end
+
+local abort = function()
+    close_all_windows()
+
+    if not abort_augroup_id == nil then
+        api.nvim_del_augroup_by_id(abort_augroup_id)
+        abort_augroup_id = nil
+    end
 end
 
 local window_do = function(win, func)
-    if api.nvim_win_is_valid(win) then
+    if win ~= -1 and api.nvim_win_is_valid(win) then
         func()
     end
 end
 
 
-local buffer_do = function(win, func)
-    if api.nvim_buf_is_valid(win) then
+local buffer_do = function(bufid, func)
+    if bufid ~= -1 and api.nvim_buf_is_valid(bufid) then
         func()
     end
 end
@@ -108,6 +129,7 @@ local run_compilation = function()
             enter = false,
             opts = {
                 split = 'right',
+                style = 'minimal',
                 win = 0
             },
             buf_opts = {
@@ -140,8 +162,34 @@ local run_compilation = function()
             stdio = { nil, stdout, stderr }
         }, function(code, _)
             vim.schedule(function()
-                vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Compilation process finished with ' .. code .. ']'})
-                vim.api.nvim_buf_set_option(buf, 'readonly', true)
+                buffer_do(buf, function()
+                    vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Compilation process finished with ' .. code .. ']'})
+                    vim.api.nvim_buf_set_option(buf, 'readonly', true)
+
+                    local matches = {}
+                    local buffer_content = api.nvim_buf_get_lines(buf, 0, -1, false)
+
+                    for _, line_content in ipairs(buffer_content) do
+                        local filename, line_number = line_content:match(error_message_pattern)
+
+                        if file and line_number then
+                            table.insert(matches, {
+                                filename = filename,
+                                lnum = tonumber(line_number),
+                                col = 0,
+                                text = "",
+                                type = "E"
+                            })
+
+                            -- debug:
+                            -- vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Match:  ' .. filename .. ':' .. line_number ..']'})
+                        end
+                    end
+
+                    if #matches > 0 then
+                        vim.fn.setqflist(matches, "r")
+                    end
+                end)
             end)
 
             stdout:close()
@@ -157,6 +205,10 @@ local run_compilation = function()
             update_buffer(data)
         end))
     end
+
+    buffer_do(buf, function()
+        abort_augroup_id = api.nvim_create_autocmd('TabLeave', { callback = abort })
+    end)
 
     run()
 end
@@ -175,10 +227,10 @@ local compile = function()
     -- state flag when user is switching between options
     local is_switching = false
 
-    local windows_to_spawn = {
-        -- input_window
+    spawn_windows{
+        -- input_backdrop_window
         {
-            enter = true,
+            enter = false,
             opts = {
                 relative = 'editor',
                 width = width,
@@ -187,54 +239,67 @@ local compile = function()
                 col = col,
                 style = "minimal",
                 border = "rounded",
+                title = ' Compile ',
+                title_pos = 'center'
             },
             buf_opts = {
             },
         },
-        -- title_window
+        -- input_window
         {
-            enter = false,
+            enter = true,
             opts = {
-                relative = "editor",
-                width = 10,
-                height = 1,
-                row = row,
-                col = col + width/2 - 4,
+                relative = 'editor',
+                width = width - 3,
+                height = height,
+                row = row + 1,
+                col = col + 3,
                 style = "minimal",
                 zindex = 200,
             },
             buf_opts = {
             },
-        }
+        },
     }
 
-    if #filtered_choices > 0 then
-        -- suggest_win
-        table.insert(windows_to_spawn, {
-            enter = false,
-            opts = {
-                relative = "editor",
-                width = width,
-                height = #filtered_choices,
-                row = row + 2,
-                col = col,
-                style = "minimal",
-                border = "rounded",
-            },
-            buf_opts = {
-            },
-        })
-    end
+    input_backdrop_win  = recently_spawned[1].window
+    input_win, input_buf = recently_spawned[2].window, recently_spawned[2].buf
 
-    spawn_windows(windows_to_spawn)
-    input_win, input_buf = recently_spawned[1].window, recently_spawned[1].buf
-    title_win, title_buf = recently_spawned[2].window, recently_spawned[2].buf
+    local ensure_suggestion_window = function()
+        if #filtered_choices > 0 then
+            if suggest_win ~= -1 and api.nvim_win_is_valid(suggest_win) then
+                return
+            end
 
-    if #filtered_choices > 0 then
-        suggest_win, suggest_buf = recently_spawned[3].window, recently_spawned[3].buf
+            spawn_windows{
+                {
+                    enter = false,
+                    opts = {
+                        relative = "editor",
+                        width = width,
+                        height = #filtered_choices,
+                        row = row + 3,
+                        col = col,
+                        style = "minimal",
+                        border = "rounded",
+                        title = ' recent ',
+                        title_pos = 'center',
+                    },
+                    buf_opts = {
+                    },
+                }
+            }
+
+            suggest_win, suggest_buf = recently_spawned[1].window, recently_spawned[1].buf
+        elseif #filtered_choices == 0 then
+            close_windows{ suggest_win }
+            suggest_win = -1
+            suggest_buf = -1
+        end
     end
 
     local set_selected_suggestion = function ()
+        ensure_suggestion_window()
         local lines = {}
 
         for i, value in ipairs(filtered_choices) do
@@ -280,6 +345,7 @@ local compile = function()
     end
 
     local on_choose_previous_option = function()
+        ensure_suggestion_window()
         if #filtered_choices < 1 then
             return
         end
@@ -300,11 +366,12 @@ local compile = function()
             return
         end
 
-        local input = vim.api.nvim_get_current_line():gsub("%s*$", "")
+        local input_line_content = vim.api.nvim_get_current_line()
+        local input = input_line_content:gsub("%s*$", "")
 
         filtered_choices = {}
 
-        if input ~= nil or input == '' then
+        if input ~= nil and #input then
             for _, str in ipairs(compile_command_history) do
                 local match = false
                 local match_index = 1
@@ -331,6 +398,11 @@ local compile = function()
             filtered_choices = compile_command_history
         end
 
+        print('input_line_content: ' .. input_line_content)
+        print('input: ' .. input)
+        print('filtered_count: ' .. #filtered_choices)
+
+        ensure_suggestion_window()
         window_do(suggest_win, function()
             vim.api.nvim_win_set_height(suggest_win, #filtered_choices)
             set_selected_suggestion()
@@ -338,7 +410,20 @@ local compile = function()
     end
 
     local on_compile = function()
-        compile_cmd = vim.api.nvim_get_current_line():gsub("%s*$", "")
+        if not abort_input_augroup_id == nil then
+            api.nvim_del_augroup_by_id(abort_input_augroup_id)
+            abort_input_augroup_id = nil
+        end
+
+        local compile_input = vim.api.nvim_get_current_line():gsub("%s*$", "")
+
+        if #filtered_choices > 0 then
+            -- case when matched by fuzzy finding
+            compile_cmd = filtered_choices[selected_index]
+        else
+            compile_cmd = compile_input
+        end
+
         vim.cmd("stopinsert")
         local seen = false
 
@@ -361,34 +446,29 @@ local compile = function()
     end
 
     buffer_do(input_buf, function()
-        vim.api.nvim_buf_set_keymap(input_buf, "i", "<C-n>", "", { noremap = true, callback = on_choose_next_option })
-        vim.api.nvim_buf_set_keymap(input_buf, "i", "<Down>", "", { noremap = true, callback = on_choose_next_option })
-
-        vim.api.nvim_buf_set_keymap(input_buf, "i", "<C-p>", "", { noremap = true, callback = on_choose_previous_option })
-        vim.api.nvim_buf_set_keymap(input_buf, "i", "<Up>", "", { noremap = true, callback = on_choose_previous_option })
-
-        vim.api.nvim_create_autocmd("TextChangedI", { buffer = input_buf, callback = on_text_change })
-
-        vim.api.nvim_buf_set_keymap(input_buf, "i", "<CR>", "", { noremap = true, callback = on_compile })
-        vim.api.nvim_buf_set_keymap(input_buf, "i", "<ESC>", "", { noremap = true, callback = on_abort })
-    end)
-
-    buffer_do(input_buf, function()
         vim.api.nvim_buf_set_lines(input_buf, 0, -1, false, { compile_cmd .. " " })
         vim.api.nvim_win_set_cursor(input_win, {1, #compile_cmd + 1})
-    end)
-
-    buffer_do(title_buf, function()
-        vim.api.nvim_buf_set_lines(title_buf, 0, -1, false, { " Compile: "})
-    end)
-
-    window_do(suggest_win, function()
-        set_selected_suggestion()
     end)
 
     window_do(input_win, function()
         vim.api.nvim_set_current_win(input_win)
         vim.cmd('startinsert')
+    end)
+
+    set_selected_suggestion()
+
+    buffer_do(input_buf, function()
+        api.nvim_buf_set_keymap(input_buf, "i", "<C-n>", "", { noremap = true, callback = on_choose_next_option })
+        api.nvim_buf_set_keymap(input_buf, "i", "<Down>", "", { noremap = true, callback = on_choose_next_option })
+
+        api.nvim_buf_set_keymap(input_buf, "i", "<C-p>", "", { noremap = true, callback = on_choose_previous_option })
+        api.nvim_buf_set_keymap(input_buf, "i", "<Up>", "", { noremap = true, callback = on_choose_previous_option })
+
+        api.nvim_create_autocmd("TextChangedI", { buffer = input_buf, callback = on_text_change })
+        abort_input_augroup_id = api.nvim_create_autocmd('BufLeave', { buffer = input_buf, callback = on_abort })
+
+        api.nvim_buf_set_keymap(input_buf, "i", "<CR>", "", { noremap = true, callback = on_compile })
+        api.nvim_buf_set_keymap(input_buf, "i", "<ESC>", "", { noremap = true, callback = on_abort })
     end)
 end
 
@@ -396,7 +476,7 @@ end
 M.setup = function()
     vim.keymap.set('n', '<F7>', compile)
     vim.keymap.set('n', '<C-F7>', run_compilation)
-    vim.keymap.set('n', '<M-F7>', close_all_windows)
+    vim.keymap.set('n', '<M-F7>', abort)
 end
 
 M.setup()
