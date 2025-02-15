@@ -252,8 +252,8 @@ local compile = function()
                 height = height,
                 row = row,
                 col = col,
-                style = "minimal",
-                border = "rounded",
+                style = 'minimal',
+                border = 'rounded',
                 title = ' Compile ',
                 title_pos = 'center'
             },
@@ -269,7 +269,7 @@ local compile = function()
                 height = height,
                 row = row + 1,
                 col = col + 3,
-                style = "minimal",
+                style = 'minimal',
                 zindex = 200,
             },
             buf_opts = {
@@ -290,13 +290,13 @@ local compile = function()
                 {
                     enter = false,
                     opts = {
-                        relative = "editor",
+                        relative = 'editor',
                         width = width,
                         height = #filtered_choices,
                         row = row + 3,
                         col = col,
-                        style = "minimal",
-                        border = "rounded",
+                        style = 'minimal',
+                        border = 'rounded',
                         title = ' Recent ',
                         title_pos = 'center',
                     },
@@ -413,10 +413,6 @@ local compile = function()
             filtered_choices = compile_command_history
         end
 
-        print('input_line_content: ' .. input_line_content)
-        print('input: ' .. input)
-        print('filtered_count: ' .. #filtered_choices)
-
         ensure_suggestion_window()
         window_do(suggest_win, function()
             vim.api.nvim_win_set_height(suggest_win, #filtered_choices)
@@ -461,7 +457,7 @@ local compile = function()
     end
 
     buffer_do(input_buf, function()
-        vim.api.nvim_buf_set_lines(input_buf, 0, -1, false, { compile_cmd .. " " })
+        vim.api.nvim_buf_set_lines(input_buf, 0, -1, false, { compile_cmd .. ' ' })
         vim.api.nvim_win_set_cursor(input_win, {1, #compile_cmd + 1})
     end)
 
@@ -473,17 +469,17 @@ local compile = function()
     set_selected_suggestion()
 
     buffer_do(input_buf, function()
-        api.nvim_buf_set_keymap(input_buf, "i", "<C-n>", "", { noremap = true, callback = on_choose_next_option })
-        api.nvim_buf_set_keymap(input_buf, "i", "<Down>", "", { noremap = true, callback = on_choose_next_option })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<C-n>', '', { noremap = true, callback = on_choose_next_option })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<Down>', '', { noremap = true, callback = on_choose_next_option })
 
-        api.nvim_buf_set_keymap(input_buf, "i", "<C-p>", "", { noremap = true, callback = on_choose_previous_option })
-        api.nvim_buf_set_keymap(input_buf, "i", "<Up>", "", { noremap = true, callback = on_choose_previous_option })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<C-p>', '', { noremap = true, callback = on_choose_previous_option })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<Up>', '', { noremap = true, callback = on_choose_previous_option })
 
-        api.nvim_create_autocmd("TextChangedI", { buffer = input_buf, callback = on_text_change })
+        api.nvim_create_autocmd('TextChangedI', { buffer = input_buf, callback = on_text_change })
         abort_input_augroup_id = api.nvim_create_autocmd('BufLeave', { buffer = input_buf, callback = on_abort })
 
-        api.nvim_buf_set_keymap(input_buf, "i", "<CR>", "", { noremap = true, callback = on_compile })
-        api.nvim_buf_set_keymap(input_buf, "i", "<ESC>", "", { noremap = true, callback = on_abort })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<CR>', '', { noremap = true, callback = on_compile })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<ESC>', '', { noremap = true, callback = on_abort })
     end)
 end
 
