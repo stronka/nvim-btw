@@ -195,7 +195,7 @@ local run_compilation = function()
                             })
 
                             -- debug:
-                            vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Match:  ' .. filename .. ':' .. line_number ..']'})
+                            -- vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Match:  ' .. filename .. ':' .. line_number ..']'})
                         end
                     end
 
