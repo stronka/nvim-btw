@@ -3,9 +3,10 @@ local M = {}
 local vim = vim
 local api = vim.api
 
-local file = "([^%s^%[^%]]*%.[a-zA-Z0-9]+)"
-local line = "(%d+)"
-local error_message_pattern = "^" .. file .. "[^%d]*" .. line
+local file_pattern = "([^%s^%[^%]]*%.[a-zA-Z0-9]+)"
+local linenum_pattern = "(%d+)"
+local message_pattern =":(.*)"
+local error_message_pattern = "^" .. file_pattern .. "[^%d]*" .. linenum_pattern .. ".*" .. message_pattern
 
 local compile_cmd = 'make -k'
 local compile_command_history = {}
@@ -23,12 +24,10 @@ local suggest_buf = -1
 local abort_augroup_id = nil
 local abort_input_augroup_id = nil
 
+-- TODO reformat file
 -- TODO pipe is not handled!
 -- TODO handle terminal output
--- TODO hide the suggestion box if filtered_choices are zero
 -- TODO create own higlight group for window backgrounds 
--- TODO dedupe quickfix and do other improvements
--- TODO quickfix capture message and inline it in the file if possible?
 
 local split_string = function(str, pattern)
     if rawequal(str, nil) then
@@ -122,7 +121,21 @@ local buffer_do = function(bufid, func)
 end
 
 local run_compilation = function()
+    vim.cmd('cclose')
+
+    local function save_all_buffers()
+        for _, unsaved_buffer in ipairs(api.nvim_list_bufs()) do
+            if api.nvim_get_option_value('modified', { buf = unsaved_buffer }) then
+                if api.nvim_get_option_value('modifiable', { buf = unsaved_buffer }) then
+                    vim.cmd('w')
+                end
+            end
+        end
+    end
+
+    save_all_buffers()
     close_all_windows()
+
     spawn_windows{
         -- result_window
         {
@@ -170,24 +183,25 @@ local run_compilation = function()
                     local buffer_content = api.nvim_buf_get_lines(buf, 0, -1, false)
 
                     for _, line_content in ipairs(buffer_content) do
-                        local filename, line_number = line_content:match(error_message_pattern)
+                        local filename, line_number, message = line_content:match(error_message_pattern)
 
-                        if file and line_number then
+                        if filename and line_number and message then
                             table.insert(matches, {
                                 filename = filename,
                                 lnum = tonumber(line_number),
                                 col = 0,
-                                text = "",
+                                text = message,
                                 type = "E"
                             })
 
                             -- debug:
-                            -- vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Match:  ' .. filename .. ':' .. line_number ..']'})
+                            vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Match:  ' .. filename .. ':' .. line_number ..']'})
                         end
                     end
 
                     if #matches > 0 then
                         vim.fn.setqflist(matches, "r")
+                        vim.cmd('copen')
                     end
                 end)
             end)
@@ -212,6 +226,7 @@ local run_compilation = function()
 
     run()
 end
+
 
 local compile = function()
     close_all_windows()
@@ -282,7 +297,7 @@ local compile = function()
                         col = col,
                         style = "minimal",
                         border = "rounded",
-                        title = ' recent ',
+                        title = ' Recent ',
                         title_pos = 'center',
                     },
                     buf_opts = {
@@ -371,7 +386,7 @@ local compile = function()
 
         filtered_choices = {}
 
-        if input ~= nil and #input then
+        if input ~= nil and #input > 0 then
             for _, str in ipairs(compile_command_history) do
                 local match = false
                 local match_index = 1
@@ -479,7 +494,6 @@ M.setup = function()
     vim.keymap.set('n', '<M-F7>', abort)
 end
 
-M.setup()
 return M
 
 
