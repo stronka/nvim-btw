@@ -158,6 +158,16 @@ local run_compilation = function()
     result_window, buf = recently_spawned[1].window, recently_spawned[1].buf
 
     local update_buffer = function(data)
+        if data == nil then
+            return
+        end
+
+        data = data:gsub('\x1b%[%d+;%d+;%d+;%d+;%d+m','')
+                   :gsub('\x1b%[%d+;%d+;%d+;%d+m','')
+                   :gsub('\x1b%[%d+;%d+;%d+m','')
+                   :gsub('\x1b%[%d+;%d+m','')
+                   :gsub('\x1b%[%d+m','')
+
         buffer_do(buf, function()
             vim.api.nvim_buf_set_lines(buf, -1, -1, false, split_string(data, "[^\r\n]+"))
         end)
