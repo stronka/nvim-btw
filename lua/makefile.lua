@@ -23,9 +23,10 @@ local suggest_buf = -1
 
 local abort_augroup_id = nil
 local abort_input_augroup_id = nil
+local compilation_process_handle = nil
 
 -- TODO reformat file
--- TODO pipe is not handled!
+-- TODO pipe and & are not handled!
 -- TODO handle terminal output
 -- TODO create own higlight group for window backgrounds 
 
@@ -169,14 +170,27 @@ local run_compilation = function()
         local cmd_table = split_string(compile_cmd, "[^ ]+")
         local cmd, args = cmd_table[1], { table.unpack(cmd_table, 2) }
 
-        local handle
-        handle, _ = vim.uv.spawn(cmd, {
+        buffer_do(buf, function()
+            vim.api.nvim_buf_set_lines(buf, -1, -1, false, {
+                '[Compilation started at: ' ..  os.date() .. ']',
+                '',
+            })
+        end)
+
+        local timestamp = os.clock()
+
+        compilation_process_handle, _ = vim.uv.spawn(cmd, {
             args = args,
             stdio = { nil, stdout, stderr }
         }, function(code, _)
             vim.schedule(function()
                 buffer_do(buf, function()
-                    vim.api.nvim_buf_set_lines(buf, -1, -1, false, {'[Compilation process finished with ' .. code .. ']'})
+                    local time_elapsed = os.clock() - timestamp
+                    vim.api.nvim_buf_set_lines(buf, -1, -1, false, {
+                        '',
+                        '[Compilation process finished with ' .. code .. ']',
+                        '[CPU time elapsed: ' .. string.format('%.6f', time_elapsed) .. ' s]',
+                    })
                     vim.api.nvim_buf_set_option(buf, 'readonly', true)
 
                     local matches = {}
@@ -208,7 +222,11 @@ local run_compilation = function()
 
             stdout:close()
             stderr:close()
-            handle:close()
+
+            if compilation_process_handle ~= nil then
+                compilation_process_handle:close()
+                compilation_process_handle = nil
+            end
         end)
 
         vim.uv.read_start(stdout, vim.schedule_wrap(function(_, data)
@@ -223,6 +241,16 @@ local run_compilation = function()
     buffer_do(buf, function()
         abort_augroup_id = api.nvim_create_autocmd('TabLeave', { callback = abort })
     end)
+
+    if compile_cmd == nil or #compile_cmd == 0 then
+        update_buffer('No compilation command specified. Aborting')
+        return
+    end
+
+    if compilation_process_handle ~= nil then
+        update_buffer('Previous compilation process has not been finished. Aborting.')
+        return
+    end
 
     run()
 end
@@ -297,7 +325,7 @@ local compile = function()
                         col = col,
                         style = 'minimal',
                         border = 'rounded',
-                        title = ' Recent ',
+                        title = ' Recent  ',
                         title_pos = 'center',
                     },
                     buf_opts = {
@@ -426,26 +454,21 @@ local compile = function()
             abort_input_augroup_id = nil
         end
 
-        local compile_input = vim.api.nvim_get_current_line():gsub("%s*$", "")
-
-        if #filtered_choices > 0 then
-            -- case when matched by fuzzy finding
-            compile_cmd = filtered_choices[selected_index]
-        else
-            compile_cmd = compile_input
-        end
-
         vim.cmd("stopinsert")
-        local seen = false
+        compile_cmd = vim.api.nvim_get_current_line():gsub("%s*$", "")
 
-        for _, value in ipairs(compile_command_history) do
-            if value == compile_cmd then
-                seen = true
+        if not (compile_cmd == nil or #compile_cmd == 0) then
+            local seen = false
+
+            for _, value in ipairs(compile_command_history) do
+                if value == compile_cmd then
+                    seen = true
+                end
             end
-        end
 
-        if not seen then
-            table.insert(compile_command_history, compile_cmd)
+            if not seen then
+                table.insert(compile_command_history, compile_cmd)
+            end
         end
 
         run_compilation()
@@ -475,14 +498,15 @@ local compile = function()
         api.nvim_buf_set_keymap(input_buf, 'i', '<C-p>', '', { noremap = true, callback = on_choose_previous_option })
         api.nvim_buf_set_keymap(input_buf, 'i', '<Up>', '', { noremap = true, callback = on_choose_previous_option })
 
-        api.nvim_create_autocmd('TextChangedI', { buffer = input_buf, callback = on_text_change })
-        abort_input_augroup_id = api.nvim_create_autocmd('BufLeave', { buffer = input_buf, callback = on_abort })
-
+        api.nvim_buf_set_keymap(input_buf, 'i', '<M-BS>', '', { noremap = true, callback = function() vim.cmd('norm dd') end })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<Tab>', '', { noremap = true, callback = send_selection_to_input })
         api.nvim_buf_set_keymap(input_buf, 'i', '<CR>', '', { noremap = true, callback = on_compile })
         api.nvim_buf_set_keymap(input_buf, 'i', '<ESC>', '', { noremap = true, callback = on_abort })
+
+        api.nvim_create_autocmd('TextChangedI', { buffer = input_buf, callback = on_text_change })
+        abort_input_augroup_id = api.nvim_create_autocmd('BufLeave', { buffer = input_buf, callback = on_abort })
     end)
 end
-
 
 M.setup = function()
     vim.keymap.set('n', '<F7>', compile)
