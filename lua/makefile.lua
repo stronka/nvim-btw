@@ -541,7 +541,6 @@ M.setup = function()
     vim.keymap.set('n', '<M-F7>', abort)
 end
 
-M.setup()
 return M
 
 
