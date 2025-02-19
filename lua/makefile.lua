@@ -177,7 +177,12 @@ local run_compilation = function()
                 table.insert(lines_to_print, sanitized_line)
             end
 
-            vim.api.nvim_buf_set_lines(buf, -1, -1, false, lines_to_print)
+            api.nvim_buf_set_lines(buf, -1, -1, false, lines_to_print)
+
+            api.nvim_win_set_cursor(
+                result_window,
+                { api.nvim_buf_line_count(buf), 0 }
+            )
         end)
     end
 
