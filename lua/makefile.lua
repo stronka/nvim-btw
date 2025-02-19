@@ -282,7 +282,7 @@ end
 local compile = function()
     close_all_windows()
 
-    local width = 40
+    local width = 120
     local height = 1
     local row = math.floor((vim.o.lines - height) / 2)
     local col = math.floor((vim.o.columns - width) / 2)
