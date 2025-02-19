@@ -169,7 +169,15 @@ local run_compilation = function()
                    :gsub('\x1b%[%d+m','')
 
         buffer_do(buf, function()
-            vim.api.nvim_buf_set_lines(buf, -1, -1, false, split_string(data, "[^\r\n]+"))
+            local lines_to_print = {}
+            local sanitized_line
+
+            for _, line in ipairs(split_string(data, '[^\r\n]+')) do
+                sanitized_line = line:gsub('[\r\n]+', '')
+                table.insert(lines_to_print, sanitized_line)
+            end
+
+            vim.api.nvim_buf_set_lines(buf, -1, -1, false, lines_to_print)
         end)
     end
 
@@ -524,6 +532,7 @@ M.setup = function()
     vim.keymap.set('n', '<M-F7>', abort)
 end
 
+M.setup()
 return M
 
 
