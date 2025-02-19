@@ -386,6 +386,10 @@ local compile = function()
 
         local selected_text = filtered_choices[selected_index]
 
+        if selected_text == nil or #selected_text == 0 then
+            return
+        end
+
         buffer_do(input_buf, function()
             vim.api.nvim_buf_set_lines(input_buf, 0, -1, false, { selected_text })
         end)
