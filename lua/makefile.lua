@@ -525,7 +525,13 @@ local compile = function()
         api.nvim_buf_set_keymap(input_buf, 'i', '<C-p>', '', { noremap = true, callback = on_choose_previous_option })
         api.nvim_buf_set_keymap(input_buf, 'i', '<Up>', '', { noremap = true, callback = on_choose_previous_option })
 
+        api.nvim_buf_set_keymap(input_buf, 'i', '<M-b>', '', { noremap = true, callback = function() vim.cmd('norm B') end })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<M-f>', '', { noremap = true, callback = function() vim.cmd('norm W') end })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<M-d>', '', { noremap = true, callback = function() vim.cmd('norm dw') end })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<C-a>', '', { noremap = true, callback = function() vim.cmd('norm 0') end })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<C-e>', '', { noremap = true, callback = function() vim.cmd('norm $') end })
         api.nvim_buf_set_keymap(input_buf, 'i', '<M-BS>', '', { noremap = true, callback = function() vim.cmd('norm dd') end })
+
         api.nvim_buf_set_keymap(input_buf, 'i', '<Tab>', '', { noremap = true, callback = send_selection_to_input })
         api.nvim_buf_set_keymap(input_buf, 'i', '<CR>', '', { noremap = true, callback = on_compile })
         api.nvim_buf_set_keymap(input_buf, 'i', '<ESC>', '', { noremap = true, callback = on_abort })
