@@ -3,6 +3,9 @@ local M = {}
 local vim = vim
 local api = vim.api
 
+-- Filepath that triggered the compilation
+local last_file=nil
+
 local file_pattern = "([^%s^%[^%]]*%.[a-zA-Z0-9]+)"
 local linenum_pattern = "(%d+)"
 local message_pattern =":(.*)"
@@ -281,6 +284,7 @@ end
 
 local compile = function()
     close_all_windows()
+    last_file = vim.fn.expand('%')
 
     local width = 120
     local height = 1
@@ -534,7 +538,11 @@ local compile = function()
 
         api.nvim_buf_set_keymap(input_buf, 'i', '<Tab>', '', { noremap = true, callback = send_selection_to_input })
         api.nvim_buf_set_keymap(input_buf, 'i', '<CR>', '', { noremap = true, callback = on_compile })
-        api.nvim_buf_set_keymap(input_buf, 'i', '<ESC>', '', { noremap = true, callback = on_abort })
+        api.nvim_buf_set_keymap(input_buf, 'n', '<ESC>', '', { noremap = true, callback = on_abort })
+        api.nvim_buf_set_keymap(input_buf, 'i', '<M-.>', '', { noremap = true, callback = function()
+            vim.cmd('norm i' .. last_file)
+            vim.cmd('norm e')
+        end})
 
         api.nvim_create_autocmd('TextChangedI', { buffer = input_buf, callback = on_text_change })
         abort_input_augroup_id = api.nvim_create_autocmd('BufLeave', { buffer = input_buf, callback = on_abort })
