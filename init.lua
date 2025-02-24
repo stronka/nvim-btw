@@ -131,8 +131,6 @@ require'mason'.setup()
 require'mason-lspconfig'.setup({
     ensure_installed = {
         "jedi_language_server",
-        "ruff_lsp",
-        "tsserver",
         "tailwindcss",
         "lua_ls",
         "rust_analyzer"
@@ -148,7 +146,6 @@ lsp.lua_ls.setup(coq.lsp_ensure_capabilities())
 
 -- Python
 lsp.jedi_language_server.setup(coq.lsp_ensure_capabilities())
-lsp.ruff_lsp.setup(coq.lsp_ensure_capabilities())
 
 vim.cmd([[
     autocmd FileType python set shiftwidth=4 tabstop=4 softtabstop=4 expandtab autoindent fileformat=unix
@@ -165,7 +162,6 @@ vim.cmd([[
     autocmd BufWritePost *.{js,jsx,ts,tsx} silent !npx prettier <afile> --write
 ]])
 
-lsp.tsserver.setup(coq.lsp_ensure_capabilities())
 lsp.tailwindcss.setup(coq.lsp_ensure_capabilities())
 
 -- Rust

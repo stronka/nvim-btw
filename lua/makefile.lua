@@ -550,9 +550,9 @@ local compile = function()
 end
 
 M.setup = function()
-    vim.keymap.set('n', '<F7>', compile)
-    vim.keymap.set('n', '<C-F7>', run_compilation)
-    vim.keymap.set('n', '<M-F7>', abort)
+    vim.keymap.set('n', '<leader>co', compile)
+    vim.keymap.set('n', '<leader>cc', run_compilation)
+    vim.keymap.set('n', '<leader>cx', abort)
 end
 
 return M
