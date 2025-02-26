@@ -42,22 +42,6 @@ require('sidebar').setup()
 require('refactor').setup()
 require('makefile').setup()
 
--- TODO: add oldfiles navigation
--- can you do it with telescope?
-
--- Matching parenteses - not sure I like it
--- don't duplicate ' since it's annoying when writing english
--- vim.cmd([[
---     inoremap ( ()<Left>
---     inoremap { {}<Left>
---     inoremap [ []<Left>
---     inoremap " ""<Left>
--- ]])
-
--- TODO: org mode is a bloat, but it's a nice idea!
--- I could write my own plugin that does the same, but using markdown
--- Could I integrate browsing notes with telescope?
-
 -- PLUGIN CONFIG SECTION
 -- TODO: can I lock all plugin versions? or better yet - do it by default?
 local Plug = vim.fn['plug#']
@@ -67,7 +51,6 @@ Plug('nvim-lua/plenary.nvim')
 Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
 
 -- General purpose stuff
--- TODO: I don't need plugin themes, create one of my own
 Plug('rebelot/kanagawa.nvim')
 Plug('preservim/nerdtree')
 Plug('easymotion/vim-easymotion')
@@ -79,7 +62,6 @@ Plug('neovim/nvim-lspconfig')
 
 --  ms-jpq
 --  This is autocompletion (coq)
---  TODO: coq is good but may be more than I actually need
 Plug('ms-jpq/coq_nvim', { ['branch'] = 'coq' })
 Plug('ms-jpq/coq.artifacts', { ['branch'] = 'artifacts' })
 
@@ -93,18 +75,13 @@ Plug('NeogitOrg/neogit')
 -- Miscellanous
 Plug('nvim-lualine/lualine.nvim')
 Plug('lukas-reineke/indent-blankline.nvim')
--- TODO: might not need this one
 Plug('ryanoasis/vim-devicons')
-
--- Mutliple cursor - TODO examine
 Plug('jake-stewart/multicursor.nvim')
 
 vim.call('plug#end')
 
 -- Plugin config
 vim.cmd('colorscheme kanagawa')
-
-require("telescope").setup()
 
 vim.g.coq_settings = { ['auto_start'] = 'shut-up' }
 local coq = require'coq'
@@ -150,6 +127,7 @@ lsp.jedi_language_server.setup(coq.lsp_ensure_capabilities())
 vim.cmd([[
     autocmd FileType python set shiftwidth=4 tabstop=4 softtabstop=4 expandtab autoindent fileformat=unix
 ]])
+
 -- JS
 vim.cmd([[
     autocmd BufRead,BufNewFile *.json set filetype=json
@@ -324,10 +302,9 @@ local mc_setup = function()
 end
 
 mc_setup()
-
+-- END OF PLUGIN SECTION
 
 -- Mine
-
 if (uname.sysname:find 'Windows')
 then
     vim.cmd( [[
@@ -338,7 +315,6 @@ then
         set shellquote= shellxquote=
     ]])
 end
--- END OF PLUGIN SECTION
 
 -- LaTeX
 vim.cmd([[
@@ -351,6 +327,10 @@ vim.cmd([[
 vim.cmd([[
     nnoremap <leader>cl VyV:!bc -l<esc>0PJa=<space><esc>
 ]])
+
+-- Transparency
+vim.api.nvim_set_hl(0, 'Normal', { guibg = nil, ctermbg = nil })
+vim.api.nvim_set_hl(0, 'NonText', { guibg = nil, ctermbg = nil })
 
 -- Extra config hook - run at the end
 local nvim_extra_config = os.getenv("NVIM_EXTRA_CONFIG")
