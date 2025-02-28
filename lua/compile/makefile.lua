@@ -522,11 +522,13 @@ local compile = function()
         api.nvim_buf_set_keymap(input_buf, 'i', '<Down>', '', { noremap = true, callback = on_choose_next_option })
         api.nvim_buf_set_keymap(input_buf, 'i', '<C-n>', '', { noremap = true, callback = on_choose_next_option })
         api.nvim_buf_set_keymap(input_buf, 'i', '<C-k>', '', { noremap = true, callback = on_choose_next_option })
+        api.nvim_buf_set_keymap(input_buf, 'n', '<C-k>', '', { noremap = true, callback = on_choose_next_option })
         api.nvim_buf_set_keymap(input_buf, 'n', 'j', '', { noremap = true, callback = on_choose_next_option })
 
         api.nvim_buf_set_keymap(input_buf, 'i', '<Up>', '', { noremap = true, callback = on_choose_previous_option })
         api.nvim_buf_set_keymap(input_buf, 'i', '<C-p>', '', { noremap = true, callback = on_choose_previous_option })
         api.nvim_buf_set_keymap(input_buf, 'i', '<C-j>', '', { noremap = true, callback = on_choose_previous_option })
+        api.nvim_buf_set_keymap(input_buf, 'n', '<C-j>', '', { noremap = true, callback = on_choose_previous_option })
         api.nvim_buf_set_keymap(input_buf, 'n', 'k', '', { noremap = true, callback = on_choose_previous_option })
 
         api.nvim_buf_set_keymap(input_buf, 'i', '<M-b>', '', { noremap = true, callback = function()
