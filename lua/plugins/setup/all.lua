@@ -46,7 +46,13 @@ require('dressing').setup({
     }
 })
 
-require('render-markdown').setup{}
+local render_markdown = require('render-markdown')
+render_markdown.setup{
+    file_types = { 'markdown', 'Avante' }
+}
+vim.treesitter.language.register('markdown', 'Avante')
+render_markdown.enable()
+
 require('avante').setup{
     provider = 'claude-haiku'
 }
