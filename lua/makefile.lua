@@ -264,10 +264,6 @@ local run_compilation = function()
         end))
     end
 
-    buffer_do(buf, function()
-        abort_augroup_id = api.nvim_create_autocmd('TabLeave', { callback = abort })
-    end)
-
     if compile_cmd == nil or #compile_cmd == 0 then
         update_buffer('No compilation command specified. Aborting')
         return
@@ -545,14 +541,13 @@ local compile = function()
         end})
 
         api.nvim_create_autocmd('TextChangedI', { buffer = input_buf, callback = on_text_change })
-        abort_input_augroup_id = api.nvim_create_autocmd('BufLeave', { buffer = input_buf, callback = on_abort })
     end)
 end
 
 M.setup = function()
-    vim.keymap.set('n', '<leader>co', compile)
-    vim.keymap.set('n', '<leader>cc', run_compilation)
-    vim.keymap.set('n', '<leader>cx', abort)
+    vim.keymap.set('n', '<leader>R', compile)
+    vim.keymap.set('n', '<leader>rr', run_compilation)
+    vim.keymap.set('n', '<leader>ra', abort)
 end
 
 return M
