@@ -4,12 +4,13 @@ local uname = vim.loop.os_uname()
 require 'options'
 require 'plugins.load'
 
+require 'keymaps'
+
 require('navigation').setup()
 require('sidebar').setup()
 require('refactor').setup()
 require('compile.makefile').setup()
 
-require 'keymaps'
 
 if (uname.sysname:find 'Windows')
 then
