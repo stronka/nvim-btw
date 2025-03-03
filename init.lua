@@ -38,6 +38,8 @@ vim.api.nvim_set_hl(0, 'SignColumn', { guibg = nil, ctermbg = nil })
 vim.api.nvim_set_hl(0, 'StatusLine', { guibg = nil, ctermbg = nil })
 vim.api.nvim_set_hl(0, 'StatusLineNC', { guibg = nil, ctermbg = nil })
 vim.api.nvim_set_hl(0, 'FloatBorder', { guibg = nil, ctermbg = nil })
+vim.api.nvim_set_hl(0, 'FloatTitle', { guibg = nil, ctermbg = nil })
+vim.api.nvim_set_hl(0, 'FloatFooter', { guibg = nil, ctermbg = nil })
 vim.api.nvim_set_hl(0, 'NormalFloat', { guibg = nil, ctermbg = nil })
 
 -- Extra config hook - run at the end

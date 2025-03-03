@@ -116,7 +116,6 @@ vim.cmd([[
     autocmd FileType typescript setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
-    autocmd BufWritePost *.{js,jsx,ts,tsx} silent !npx prettier <afile> --write
 ]])
 
 lsp.rust_analyzer.setup{
