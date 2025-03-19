@@ -1,13 +1,9 @@
 local vim = vim
 local M = {}
 local chan = 0
-local buf = -1
 
 local TerminalRight = function()
-    if buf == -1 or vim.api.nvim_buf_is_valid(buf) then
-        buf = vim.api.nvim_create_buf(false, true)
-    end
-
+    local buf = vim.api.nvim_create_buf(false, true)
     local _ = vim.api.nvim_open_win(buf, true, { split = 'right', style = 'minimal' })
 
     vim.cmd.term()
