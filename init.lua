@@ -10,7 +10,7 @@ require('navigation').setup()
 require('sidebar').setup()
 require('refactor').setup()
 require('compile.makefile').setup()
-
+require('terminal').setup()
 
 if (uname.sysname:find 'Windows')
 then
