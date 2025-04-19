@@ -7,8 +7,9 @@ require'mason'.setup()
 require'mason-lspconfig'.setup({
     ensure_installed = {
         "jedi_language_server",
-        "tailwindcss",
+        -- "tailwindcss",
         "lua_ls",
+        "ts_ls",
         "rust_analyzer"
     }
 })
@@ -100,13 +101,17 @@ lsp.jedi_language_server.setup{
     capabilities = lsp_capabilities
 }
 
+lsp.ts_ls.setup{
+    capabilities = lsp_capabilities
+}
+
 vim.cmd([[
     autocmd FileType python set shiftwidth=4 tabstop=4 softtabstop=4 expandtab autoindent fileformat=unix
 ]])
 
-lsp.tailwindcss.setup{
-    capabilities = lsp_capabilities
-}
+-- lsp.tailwindcss.setup{
+--     capabilities = lsp_capabilities
+-- }
 
 vim.cmd([[
     autocmd BufRead,BufNewFile *.json set filetype=json

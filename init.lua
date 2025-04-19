@@ -42,6 +42,16 @@ vim.api.nvim_set_hl(0, 'FloatTitle', { guibg = nil, ctermbg = nil })
 vim.api.nvim_set_hl(0, 'FloatFooter', { guibg = nil, ctermbg = nil })
 vim.api.nvim_set_hl(0, 'NormalFloat', { guibg = nil, ctermbg = nil })
 
+vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "TelescopePromptBorder", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "TelescopeResultsBorder", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "TelescopePreviewBorder", { bg = "NONE" })
+
+vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "TelescopePreviewNormal", { bg = "NONE" })
+
 -- Extra config hook - run at the end
 local nvim_extra_config = os.getenv("NVIM_EXTRA_CONFIG")
 
