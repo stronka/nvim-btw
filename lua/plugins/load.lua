@@ -1,2 +1,5 @@
 require 'plugins.require'
+require 'plugins.setup.lsp'
 require 'plugins.setup.all'
+require 'plugins.setup.dap'
+require 'plugins.setup.telescope'

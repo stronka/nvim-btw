@@ -8,21 +8,6 @@ vim.keymap.set('n', '<leader>qe', function()
     vim.opt_local.errorformat = "%f|%l col %c|%m"
 end)
 
-local telescope_builtin = require('telescope.builtin')
-
-local function telescope_setup()
-    vim.keymap.set('n', '<leader>fm', telescope_builtin.marks, {})
-    vim.keymap.set('n', '<leader>fk', telescope_builtin.keymaps, {})
-    vim.keymap.set('n', '<leader>fs', telescope_builtin.lsp_document_symbols, {})
-    vim.keymap.set('n', '<leader>fr', telescope_builtin.lsp_references, {})
-    vim.keymap.set('n', '<leader>fh', telescope_builtin.help_tags, {})
-    vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, {})
-    vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, {})
-    vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, {})
-end
-
-telescope_setup()
-
 local easymotion_setup = function ()
     vim.g.EasyMotion_smartcase = 1
     vim.api.nvim_set_keymap('n', '<Leader><Leader>w', '<Plug>(easymotion-bd-w)', {})

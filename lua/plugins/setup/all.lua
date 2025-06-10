@@ -1,6 +1,5 @@
 local vim = vim
 
-require 'plugins.setup.lsp'
 
 vim.cmd('colorscheme kanagawa')
 require('gitsigns').setup()
@@ -11,15 +10,6 @@ local ibl = require('ibl')
 ibl.setup()
 ibl.overwrite{
     exclude = { filetypes = { 'python' } }
-}
-
-local telescope = require('telescope')
-telescope.setup{
-    defaults = {
-        file_ignore_patterns = {
-            'node_modules',
-        }
-    }
 }
 
 local mc_setup = function()
@@ -54,5 +44,18 @@ vim.treesitter.language.register('markdown', 'Avante')
 render_markdown.enable()
 
 require('avante').setup{
-    provider = 'claude-haiku'
+    provider = 'claude-haiku',
+    selector = {
+        provider = 'telescope'
+    }
 }
+
+require('orgmode').setup{
+  org_agenda_files = '~/Dokumenty/notes/**/*',
+  org_default_notes_file = '~/Dokumenty/notes/refile.org',
+}
+
+require('nvim-treesitter.configs').setup({
+    ensure_installed = 'all',
+    ignore_install = { 'org' },
+})
