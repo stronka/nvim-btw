@@ -2,6 +2,7 @@ require("plugins.install")
 
 require("plugins.setup.treesitter")
 require("plugins.setup.lsp")
+require("plugins.setup.outline")
 require("plugins.setup.llm")
 require("plugins.setup.statusline")
 require("plugins.setup.easymotion")
