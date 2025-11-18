@@ -1,8 +1,8 @@
 local vim = vim
 
-vim.cmd.syntax('enable')
-vim.cmd('nnoremap <space> :')
-vim.cmd('filetype plugin indent on')
+vim.cmd.syntax("enable")
+vim.cmd("nnoremap <space> :")
+vim.cmd("filetype plugin indent on")
 
 vim.g.netrw_altv = 1
 vim.g.netrw_banner = 0

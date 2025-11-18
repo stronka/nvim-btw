@@ -1,8 +1,8 @@
-local vim = vim;
-local M = {};
+local vim = vim
+local M = {}
 
 M.setup = function()
-    vim.cmd([[
+	vim.cmd([[
         nnoremap <C-w><C-o> :only<CR>
         nnoremap <C-w><C-n> <C-w>j
         nnoremap <C-w><C-p> <C-w>k
@@ -13,8 +13,8 @@ M.setup = function()
         nnoremap <C-w><C-]> <C-w>l
     ]])
 
-    -- Tab navigation
-    vim.cmd([[
+	-- Tab navigation
+	vim.cmd([[
         nnoremap <C-t><C-t> :tabnew<CR>
         nnoremap <C-t><C-e> :tabe<space>
         nnoremap <C-t><C-k> :tabc<CR>
@@ -22,8 +22,8 @@ M.setup = function()
         nnoremap <C-t><C-n> :tabn<CR>
     ]])
 
-    -- Buffer navigation
-    vim.cmd([[
+	-- Buffer navigation
+	vim.cmd([[
         nnoremap <C-b><C-b> :ls<CR>
         nnoremap <C-b><C-j> :ls<CR>:b<space>
         nnoremap <C-b><C-k> :ls<CR>:bdelete<space>
@@ -31,9 +31,9 @@ M.setup = function()
         nnoremap <C-b><C-n> :bn<CR>
     ]])
 
-    -- Quickfix list navigation
-    -- M-F7 obsolete with the refactor.nvim plugin, search to replace
-    vim.cmd([[
+	-- Quickfix list navigation
+	-- M-F7 obsolete with the refactor.nvim plugin, search to replace
+	vim.cmd([[
         nnoremap <M-F7> yiw:grep<space><C-r>"<space> 
         nnoremap <C-l><C-l> :copen<CR>
         nnoremap <C-l><C-k> :cclose<CR>
@@ -41,10 +41,10 @@ M.setup = function()
         nnoremap <C-l><C-n> :cnext<CR>
     ]])
 
-    -- Tmode navigation
-    vim.cmd([[
+	-- Tmode navigation
+	vim.cmd([[
         tnoremap <C-t><C-t> <C-\><C-n>
     ]])
 end
 
-return M;
+return M

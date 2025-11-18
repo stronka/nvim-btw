@@ -1,5 +1,6 @@
-require 'plugins.require'
-require 'plugins.setup.lsp'
-require 'plugins.setup.all'
-require 'plugins.setup.dap'
-require 'plugins.setup.telescope'
+require("plugins.require")
+require("plugins.setup.all")
+require("plugins.setup.dap")
+require("plugins.setup.telescope")
+require("plugins.setup.theme")
+require("plugins.setup.lsp")
