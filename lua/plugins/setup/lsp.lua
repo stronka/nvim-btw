@@ -167,4 +167,3 @@ vim.cmd([[
     autocmd FileType python set shiftwidth=4 tabstop=4 softtabstop=4 expandtab autoindent fileformat=unix
     autocmd FileType lua setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
 ]])
-

@@ -1,5 +1,4 @@
 local vim = vim
-local uname = vim.loop.os_uname()
 
 require("options")
 require("keymaps")
@@ -10,7 +9,9 @@ require("navigation").setup()
 require("refactor").setup()
 require("compile.makefile").setup()
 require("terminal").setup()
+require("latex").setup()
 
+local uname = vim.loop.os_uname()
 if uname.sysname:find("Windows") then
 	vim.cmd([[
         let &shell = executable('pwsh') ? 'pwsh' : 'powershell'
@@ -20,12 +21,6 @@ if uname.sysname:find("Windows") then
         set shellquote= shellxquote=
     ]])
 end
-
--- LaTeX
-vim.cmd([[
-    autocmd BufWritePost *.tex silent !mkdir -p output && pdflatex --output-directory=output <afile>
-    autocmd FileType tex setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
-]])
 
 -- Extra config hook - run at the end
 local nvim_extra_config = os.getenv("NVIM_EXTRA_CONFIG")
