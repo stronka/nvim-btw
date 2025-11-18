@@ -1,3 +1,5 @@
+local vim = vim
+
 require("ollama").setup {
 	model = "codellama",
 	stream = true,

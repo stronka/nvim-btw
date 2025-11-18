@@ -2,12 +2,11 @@ local vim = vim
 local uname = vim.loop.os_uname()
 
 require("options")
-require("plugins.load")
-
 require("keymaps")
 
+require("plugins.load")
+
 require("navigation").setup()
-require("sidebar").setup()
 require("refactor").setup()
 require("compile.makefile").setup()
 require("terminal").setup()

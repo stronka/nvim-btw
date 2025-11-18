@@ -1,4 +1,5 @@
 local vim = vim
+
 local telescope = require("telescope")
 telescope.setup {
 	defaults = {
