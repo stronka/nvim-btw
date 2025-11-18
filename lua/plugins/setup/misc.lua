@@ -23,26 +23,3 @@ require("orgmode").setup {
 	org_agenda_files = "~/Documents/notes/**/*",
 	org_default_notes_file = "~/Documents/notes/refile.org",
 }
-
-require("nvim-treesitter.configs").setup {
-	ensure_installed = {
-		"c",
-		"cpp",
-		"lua",
-		"python",
-		"vim",
-		"vimdoc",
-		"markdown",
-		"markdown_inline",
-		"javascript",
-		"typescript",
-		"html",
-	},
-	ignore_install = { "org" },
-	highlit = {
-		enable = true,
-	},
-}
-
--- terraform
-vim.treesitter.language.register("terraform", { "terraform", "terraform-vars" })

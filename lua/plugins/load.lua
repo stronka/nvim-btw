@@ -1,6 +1,10 @@
 require("plugins.install")
+
+require("plugins.setup.treesitter")
 require("plugins.setup.lsp")
-require("plugins.setup.all")
+require("plugins.setup.llm")
+require("plugins.setup.statusline")
+require("plugins.setup.misc")
 require("plugins.setup.dap")
 require("plugins.setup.theme")
 require("plugins.setup.telescope")

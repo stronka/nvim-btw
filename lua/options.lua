@@ -8,6 +8,7 @@ vim.g.netrw_altv = 1
 vim.g.netrw_banner = 0
 vim.g.netrw_keepdir = 1
 vim.g.netrw_liststyle = 3
+vim.g.rainbow_active = 1
 
 vim.opt.cursorline = true
 vim.opt.expandtab = true
