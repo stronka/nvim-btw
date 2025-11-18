@@ -265,11 +265,9 @@ local run_compilation = function()
 						end
 					end
 
-					-- idk if cool
-					-- if #matches > 0 then
-					-- vim.fn.setqflist(matches, "r")
-					-- vim.cmd('copen')
-					-- end
+					if #matches > 0 then
+						vim.fn.setqflist(matches, "r")
+					end
 				end)
 			end)
 
