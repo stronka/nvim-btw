@@ -1,15 +1,15 @@
 local vim = vim
 
-require("lspkind").init({})
+require("lspkind").init {}
 
 local gruvbox = require("gruvbox")
-gruvbox.setup({
+gruvbox.setup {
 	overrides = {
 		SignColumn = {
 			bg = gruvbox.palette.dark0,
 		},
 	},
-})
+}
 
 vim.g.colors_name = "gruvbox"
 vim.o.background = "dark"

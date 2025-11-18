@@ -102,7 +102,7 @@ local close_windows = function(windows)
 end
 
 local close_all_windows = function()
-	close_windows({ result_window, input_win, suggest_win, input_backdrop_win })
+	close_windows { result_window, input_win, suggest_win, input_backdrop_win }
 
 	result_window = -1
 	suggest_win = -1
@@ -165,7 +165,7 @@ local run_compilation = function()
 		split_style = "below"
 	end
 
-	spawn_windows({
+	spawn_windows {
 		-- result_window
 		{
 			enter = false,
@@ -184,7 +184,7 @@ local run_compilation = function()
 				{ "relativenumber", false },
 			},
 		},
-	})
+	}
 
 	result_window, buf = recently_spawned[1].window, recently_spawned[1].buf
 
@@ -193,7 +193,8 @@ local run_compilation = function()
 			return
 		end
 
-		data = data:gsub("\x1b%[%d+;%d+;%d+;%d+;%d+m", "")
+		data = data
+			:gsub("\x1b%[%d+;%d+;%d+;%d+;%d+m", "")
 			:gsub("\x1b%[%d+;%d+;%d+;%d+m", "")
 			:gsub("\x1b%[%d+;%d+;%d+m", "")
 			:gsub("\x1b%[%d+;%d+m", "")
@@ -324,7 +325,7 @@ local compile = function()
 	-- state flag when user is switching between options
 	local is_switching = false
 
-	spawn_windows({
+	spawn_windows {
 		-- input_backdrop_window
 		{
 			enter = false,
@@ -357,7 +358,7 @@ local compile = function()
 			win_opts = {},
 			buf_opts = {},
 		},
-	})
+	}
 
 	input_backdrop_win = recently_spawned[1].window
 	input_win, input_buf = recently_spawned[2].window, recently_spawned[2].buf
@@ -368,7 +369,7 @@ local compile = function()
 				return
 			end
 
-			spawn_windows({
+			spawn_windows {
 				{
 					enter = false,
 					opts = {
@@ -385,11 +386,11 @@ local compile = function()
 					win_opts = {},
 					buf_opts = {},
 				},
-			})
+			}
 
 			suggest_win, suggest_buf = recently_spawned[1].window, recently_spawned[1].buf
 		elseif #filtered_choices == 0 then
-			close_windows({ suggest_win })
+			close_windows { suggest_win }
 			suggest_win = -1
 			suggest_buf = -1
 		end

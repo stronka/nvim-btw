@@ -4,7 +4,7 @@ local function cmp_setup()
 	local cmp = require("cmp")
 	local lspkind = require("lspkind")
 
-	cmp.setup({
+	cmp.setup {
 		snippet = {
 			-- REQUIRED - you must specify a snippet engine
 			expand = function(args)
@@ -25,13 +25,13 @@ local function cmp_setup()
 			-- completion = cmp.config.window.bordered(),
 			-- documentation = cmp.config.window.bordered(),
 		},
-		mapping = cmp.mapping.preset.insert({
+		mapping = cmp.mapping.preset.insert {
 			["<C-b>"] = cmp.mapping.scroll_docs(-4),
 			["<C-f>"] = cmp.mapping.scroll_docs(4),
 			["<C-Space>"] = cmp.mapping.complete(),
 			["<C-e>"] = cmp.mapping.abort(),
-			["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-		}),
+			["<CR>"] = cmp.mapping.confirm { select = true }, -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+		},
 		sources = cmp.config.sources({
 			{ name = "nvim_lsp" },
 			{ name = "vsnip" }, -- For vsnip users.
@@ -42,7 +42,7 @@ local function cmp_setup()
 			{ name = "buffer" },
 		}),
 		formatting = {
-			format = lspkind.cmp_format({
+			format = lspkind.cmp_format {
 				mode = "symbol_text",
 				maxiwdth = {
 					menu = 50,
@@ -53,9 +53,9 @@ local function cmp_setup()
 				before = function(entry, vim_item)
 					return vim_item
 				end,
-			}),
+			},
 		},
-	})
+	}
 
 	-- To use git you need to install the plugin petertriho/cmp-git and uncomment lines below
 	-- Set configuration for specific filetype.
@@ -165,12 +165,13 @@ vim.cmd([[
     autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
     autocmd FileType python set shiftwidth=4 tabstop=4 softtabstop=4 expandtab autoindent fileformat=unix
+    autocmd FileType lua setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
 ]])
 
 local outline = require("outline")
 
 local function setup_outline()
-	outline.setup({
+	outline.setup {
 		symbols = {
 			icon_fetcher = function(k)
 				if k == "Package" then
@@ -185,7 +186,7 @@ local function setup_outline()
 			width = 25,
 			relative_width = true,
 		},
-	})
+	}
 
 	vim.keymap.set("n", "<leader>oo", function()
 		vim.api.nvim_command("botright OutlineOpen")

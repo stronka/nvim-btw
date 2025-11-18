@@ -1,6 +1,6 @@
 local vim = vim
 local telescope = require("telescope")
-telescope.setup({
+telescope.setup {
 	defaults = {
 		file_ignore_patterns = {
 			"node_modules",
@@ -14,7 +14,7 @@ telescope.setup({
 			},
 		},
 	},
-})
+}
 
 local telescope_builtin = require("telescope.builtin")
 
@@ -32,16 +32,16 @@ local function telescope_setup()
 	vim.keymap.set("n", "<leader>fc", telescope_builtin.command_history, {})
 
 	vim.keymap.set("n", "<leader>fa", function()
-		telescope_builtin.find_files({
+		telescope_builtin.find_files {
 			hidden = true,
 			no_ignore = true,
-		})
+		}
 	end, {})
 
 	vim.keymap.set("n", "<leader>fw", function()
-		telescope_builtin.grep_string({
+		telescope_builtin.grep_string {
 			search = vim.fn.expand("<cword>"),
-		})
+		}
 	end, {})
 end
 

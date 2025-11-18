@@ -1,10 +1,10 @@
 local vim = vim
 
 require("gitsigns").setup()
-require("neogit").setup({})
+require("neogit").setup {}
 
 -- ollama
-require("ollama").setup({
+require("ollama").setup {
 	model = "codellama",
 	stream = true,
 	serve = {
@@ -13,7 +13,7 @@ require("ollama").setup({
 		stop_command = "pkill",
 		stop_args = { "-SIGTERM", "ollama" },
 	},
-})
+}
 
 local function get_status_icon()
 	local status = require("ollama").status()
@@ -26,7 +26,7 @@ local function get_status_icon()
 end
 -- ollama end
 
-require("lualine").setup({
+require("lualine").setup {
 	sections = {
 		lualine_a = { "mode" },
 		lualine_b = { "branch", "diff", "diagnostics" },
@@ -35,13 +35,13 @@ require("lualine").setup({
 		lualine_y = { "progress", get_status_icon },
 		lualine_z = { "location" },
 	},
-})
+}
 
 local ibl = require("ibl")
 ibl.setup()
-ibl.overwrite({
+ibl.overwrite {
 	exclude = { filetypes = { "python" } },
-})
+}
 
 local mc_setup = function()
 	local mc = require("multicursor-nvim")
@@ -59,34 +59,34 @@ end
 
 mc_setup()
 
-require("dressing").setup({
+require("dressing").setup {
 	input = {
 		winoptions = {
 			winhighlight = "NormalFloat:DiagnosticError",
 		},
 	},
-})
+}
 
 local render_markdown = require("render-markdown")
-render_markdown.setup({
+render_markdown.setup {
 	file_types = { "markdown", "Avante" },
-})
+}
 vim.treesitter.language.register("markdown", "Avante")
 render_markdown.enable()
 
-require("avante").setup({
+require("avante").setup {
 	provider = "claude-haiku",
 	selector = {
 		provider = "telescope",
 	},
-})
+}
 
-require("orgmode").setup({
+require("orgmode").setup {
 	org_agenda_files = "~/Documents/notes/**/*",
 	org_default_notes_file = "~/Documents/notes/refile.org",
-})
+}
 
-require("nvim-treesitter.configs").setup({
+require("nvim-treesitter.configs").setup {
 	ensure_installed = {
 		"c",
 		"cpp",
@@ -104,7 +104,7 @@ require("nvim-treesitter.configs").setup({
 	highlit = {
 		enable = true,
 	},
-})
+}
 
 -- terraform
 vim.treesitter.language.register("terraform", { "terraform", "terraform-vars" })
