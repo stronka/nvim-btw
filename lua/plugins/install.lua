@@ -14,10 +14,6 @@ Plug("hedyhli/outline.nvim", { ["tag"] = "v1.1.0" })
 Plug("williamboman/mason.nvim")
 Plug("williamboman/mason-lspconfig.nvim")
 Plug("neovim/nvim-lspconfig")
---
-
-Plug("lewis6991/gitsigns.nvim")
-Plug("NeogitOrg/neogit")
 
 Plug("nvim-treesitter/nvim-treesitter", { ["do"] = ":TSUpdate", ["version"] = "v0.10.0" })
 Plug("hrsh7th/nvim-cmp")
@@ -25,6 +21,18 @@ Plug("hrsh7th/cmp-cmdline")
 Plug("hrsh7th/cmp-path")
 Plug("hrsh7th/cmp-buffer")
 Plug("hrsh7th/cmp-nvim-lsp")
+
+-- Snippets
+Plug("rafamadriz/friendly-snippets")
+Plug(
+	"L3MON4D3/LuaSnip",
+	{ ["tag"] = "v2.4.1", ["do"] = "make install_jsregexp", ["dependencies"] = { "rafamadriz/friendly-snippets" } }
+)
+Plug("saadparwaiz1/cmp_luasnip")
+
+-- Git
+Plug("lewis6991/gitsigns.nvim")
+Plug("NeogitOrg/neogit")
 
 -- Avante deps
 Plug("stevearc/dressing.nvim")
