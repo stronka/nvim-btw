@@ -36,7 +36,7 @@ vim.keymap.set("n", "<space><space>", function()
 	end
 end)
 
-vim.keymap.set("n", "<leader>tt", function()
+vim.keymap.set("n", "<leader>tf", function()
 	vim.api.nvim_command("NERDTreeFind")
 	on_focus_enter()
 end)
@@ -45,10 +45,10 @@ vim.keymap.set("n", "<leader>tr", function()
 	vim.api.nvim_command("NERDTreeCWD")
 end)
 
-vim.keymap.set("n", "<F4>", function()
+vim.keymap.set("n", "<leader>tt", function()
 	vim.cmd("e %:h")
 end)
 
-vim.keymap.set("n", "<F3>", function()
+vim.keymap.set("n", "<leader>ta", function()
 	vim.cmd("tcd %:h")
 end)
