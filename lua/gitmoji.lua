@@ -25,7 +25,7 @@ local insert_gitmoji = function()
 end
 
 M.setup = function()
-	vim.keymap.set("n", "<Leader>gm", insert_gitmoji)
+	vim.keymap.set({ "n", "i" }, "<Leader>gm", insert_gitmoji)
 end
 
 return M

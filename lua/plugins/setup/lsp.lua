@@ -54,12 +54,25 @@ local function cmp_setup()
 				end
 			end, { "i", "s" }),
 		},
-		sources = cmp.config.sources({
+		sources = cmp.config.sources {
 			{ name = "luasnip" },
 			{ name = "nvim_lsp" },
-		}, {
-			{ name = "buffer" },
-		}),
+			{
+				name = "buffer",
+				option = {
+					get_bufnrs = function()
+						local windows = vim.api.nvim_list_wins()
+						local buffers = {}
+
+						for _, window in ipairs(windows) do
+							table.insert(buffers, vim.api.nvim_win_get_buf(window))
+						end
+
+						return buffers
+					end,
+				},
+			},
+		},
 		formatting = {
 			format = lspkind.cmp_format {
 				mode = "symbol_text",

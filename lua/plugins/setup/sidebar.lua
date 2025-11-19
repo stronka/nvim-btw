@@ -4,6 +4,10 @@ local is_sidebar_focused = false
 local sidebar_augroup = vim.api.nvim_create_augroup("SidebarGroup", { clear = true })
 local sidebar_aucmd = nil
 
+vim.g.NERDTreeSortHiddenFirst = true
+vim.g.NERDTreeShowHidden = true
+vim.g.NERDTreeMinimalUI = true
+
 local on_focus_leave = function()
 	is_sidebar_focused = false
 
