@@ -10,6 +10,7 @@ require("refactor").setup()
 require("compile.makefile").setup()
 require("terminal").setup()
 require("latex").setup()
+require("gitmoji").setup()
 
 local uname = vim.loop.os_uname()
 if uname.sysname:find("Windows") then
