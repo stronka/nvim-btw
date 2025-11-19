@@ -10,6 +10,14 @@ vim.g.netrw_keepdir = 1
 vim.g.netrw_liststyle = 3
 vim.g.rainbow_active = 1
 
+vim.cmd([[
+  let g:rainbow_conf = {
+  \	'separately': {
+  \		'nerdtree': 0
+  \	}
+  \}
+]])
+
 vim.opt.cursorline = true
 vim.opt.expandtab = true
 vim.opt.laststatus = 3
