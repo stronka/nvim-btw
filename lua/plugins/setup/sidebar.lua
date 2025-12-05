@@ -1,5 +1,17 @@
 local vim = vim
 
+local oil = require("oil")
+oil.setup {
+	default_file_explorer = true,
+	columns = {
+		"mtime",
+		"icon",
+	},
+	view_options = {
+		show_hidden = true,
+	},
+}
+
 local is_sidebar_focused = false
 local sidebar_augroup = vim.api.nvim_create_augroup("SidebarGroup", { clear = true })
 local sidebar_aucmd = nil
@@ -26,7 +38,7 @@ local on_focus_enter = function()
 	})
 end
 
-vim.keymap.set("n", "<space><space>", function()
+vim.keymap.set("n", "<leader>ts", function()
 	if not is_sidebar_focused then
 		vim.api.nvim_command("NERDTreeFocus")
 		on_focus_enter()
@@ -45,8 +57,8 @@ vim.keymap.set("n", "<leader>tr", function()
 	vim.api.nvim_command("NERDTreeCWD")
 end)
 
-vim.keymap.set("n", "<leader>tt", function()
-	vim.cmd("e %:h")
+vim.keymap.set("n", "<C-x><C-d>", function()
+	vim.api.nvim_command("Oil")
 end)
 
 vim.keymap.set("n", "<leader>ta", function()

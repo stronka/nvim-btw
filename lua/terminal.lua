@@ -17,7 +17,7 @@ end
 
 M.setup = function()
 	vim.api.nvim_create_user_command("TerminalRight", TerminalRight, {})
-	vim.keymap.set("n", "<Leader>tr", ":TerminalRight<CR>", { noremap = true, silent = true })
+	vim.keymap.set("n", "<Leader>T", ":TerminalRight<CR>", { noremap = true, silent = true })
 	vim.keymap.set("t", "<C-t><C-k>", "<C-\\><C-n>:q<CR>", { noremap = true, silent = true })
 end
 

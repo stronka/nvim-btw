@@ -1,5 +1,14 @@
 local vim = vim
 
+function _G.Reload(...)
+	return require("plenary.reload").reload_module(...)
+end
+
+function _G.R(name)
+	Reload(name)
+	return require(name)
+end
+
 require("options")
 require("keymaps")
 
@@ -7,6 +16,7 @@ require("plugins.load")
 
 require("navigation").setup()
 require("refactor").setup()
+require("compile.history")
 require("compile.makefile").setup()
 require("terminal").setup()
 require("latex").setup()
@@ -22,6 +32,12 @@ if uname.sysname:find("Windows") then
         set shellquote= shellxquote=
     ]])
 end
+
+vim.api.nvim_create_user_command("Reload", function(opts)
+	R(opts.args)
+end, {
+	nargs = 1,
+})
 
 -- Extra config hook - run at the end
 local nvim_extra_config = os.getenv("NVIM_EXTRA_CONFIG")

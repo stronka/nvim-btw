@@ -8,7 +8,7 @@ M.setup = function()
         nnoremap <C-w><C-p> <C-w>k
         nnoremap <C-w><C-s> :sp<CR>
         nnoremap <C-w><C-v> :vsp<CR>
-        nnoremap <C-w><C-k> :q<CR>
+        nnoremap <C-w><C-q> <C-w>q
         nnoremap <C-w><C-[> <C-w>h
         nnoremap <C-w><C-]> <C-w>l
     ]])
@@ -17,7 +17,7 @@ M.setup = function()
 	vim.cmd([[
         nnoremap <C-t><C-t> :tabnew<CR>
         nnoremap <C-t><C-e> :tabe<space>
-        nnoremap <C-t><C-k> :tabc<CR>
+        nnoremap <C-t><C-q> :tabc<CR>
         nnoremap <C-t><C-p> :tabp<CR>
         nnoremap <C-t><C-n> :tabn<CR>
     ]])
@@ -26,7 +26,7 @@ M.setup = function()
 	vim.cmd([[
         nnoremap <C-b><C-b> :ls<CR>
         nnoremap <C-b><C-j> :ls<CR>:b<space>
-        nnoremap <C-b><C-k> :ls<CR>:bdelete<space>
+        nnoremap <C-b><C-q> :ls<CR>:bdelete<space>
         nnoremap <C-b><C-p> :bp<CR>
         nnoremap <C-b><C-n> :bn<CR>
     ]])
@@ -36,7 +36,7 @@ M.setup = function()
 	vim.cmd([[
         nnoremap <M-F7> yiw:grep<space><C-r>"<space> 
         nnoremap <C-l><C-l> :copen<CR>
-        nnoremap <C-l><C-k> :cclose<CR>
+        nnoremap <C-l><C-q> :cclose<CR>
         nnoremap <C-l><C-p> :cprevious<CR>
         nnoremap <C-l><C-n> :cnext<CR>
     ]])

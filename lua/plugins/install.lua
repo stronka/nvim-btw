@@ -3,19 +3,23 @@ local vim = vim
 local Plug = vim.fn["plug#"]
 
 vim.call("plug#begin")
+
 Plug("nvim-lua/plenary.nvim")
 Plug("nvim-telescope/telescope.nvim", { ["tag"] = "0.1.6" })
-
 Plug("preservim/nerdtree")
-Plug("hedyhli/outline.nvim", { ["tag"] = "v1.1.0" })
--- Plug('stevearc/aerial.nvim')
+
+Plug("stevearc/oil.nvim", { ["tag"] = "v2.15.0" })
+Plug("nvim-tree/nvim-web-devicons") -- needed for oil, works for cmp as well
+Plug("ryanoasis/vim-devicons") -- only for nerdtree
 
 -- LSP stuff
+Plug("hedyhli/outline.nvim", { ["tag"] = "v1.1.0" })
 Plug("williamboman/mason.nvim")
 Plug("williamboman/mason-lspconfig.nvim")
 Plug("neovim/nvim-lspconfig")
 
 Plug("nvim-treesitter/nvim-treesitter", { ["do"] = ":TSUpdate", ["version"] = "v0.10.0" })
+Plug("nvim-treesitter/nvim-treesitter-textobjects")
 Plug("hrsh7th/nvim-cmp")
 Plug("hrsh7th/cmp-cmdline")
 Plug("hrsh7th/cmp-path")
@@ -60,11 +64,11 @@ Plug("catppuccin/nvim", { ["tag"] = "v1.11.0", ["as"] = "catppuccin" })
 Plug("luochen1990/rainbow")
 Plug("nvim-lualine/lualine.nvim")
 Plug("lukas-reineke/indent-blankline.nvim")
-Plug("ryanoasis/vim-devicons")
 Plug("onsails/lspkind.nvim")
 
 -- Misc
 -- Plug('folke/noice.nvim', { ['tag'] = 'v4.10.0' })
+Plug("m4xshen/autoclose.nvim")
 Plug("jake-stewart/multicursor.nvim")
 Plug("michaeljsmith/vim-indent-object")
 Plug("easymotion/vim-easymotion")

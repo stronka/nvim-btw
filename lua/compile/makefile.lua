@@ -3,18 +3,12 @@ local M = {}
 local vim = vim
 local api = vim.api
 
-local utils = require("compile.utils")
-
--- Filepath that triggered the compilation
-local last_file = nil
+local history = require("compile.history")
 
 local file_pattern = "([^%s^%[^%]]*%.[a-zA-Z0-9]+)"
 local linenum_pattern = "(%d+)"
 local message_pattern = ":(.*)"
 local error_message_pattern = "^" .. file_pattern .. "[^%d]*" .. linenum_pattern .. ".*" .. message_pattern
-
-local compile_cmd = ""
-local compile_command_history = {}
 
 local result_window = -1
 local suggest_win = -1
@@ -22,20 +16,11 @@ local input_win = -1
 local input_backdrop_win = -1
 
 local buf = -1
-local input_buf = -1
-local input_backdrop_buf = -1
-local suggest_buf = -1
 
 local abort_augroup_id = nil
-local abort_input_augroup_id = nil
 local compilation_process_handle = nil
 
-local compile_window_breakpoint = 140
-
--- TODO reformat file
--- TODO pipe and & are not handled!
--- TODO handle terminal output
--- TODO create own higlight group for window backgrounds
+local compile_window_breakpoint = 200
 
 local split_string = function(str, pattern)
 	if rawequal(str, nil) then
@@ -110,9 +95,6 @@ local close_all_windows = function()
 	input_backdrop_win = -1
 
 	buf = -1
-	input_buf = -1
-	suggest_buf = -1
-	input_backdrop_buf = -1
 end
 
 local abort = function()
@@ -136,7 +118,7 @@ local buffer_do = function(bufid, func)
 	end
 end
 
-local run_compilation = function()
+local run_compilation = function(command, interactive)
 	vim.cmd("cclose")
 
 	local function save_all_buffers()
@@ -219,9 +201,6 @@ local run_compilation = function()
 		local stdout = vim.uv.new_pipe()
 		local stderr = vim.uv.new_pipe()
 
-		local cmd_table = utils.split_cmd(compile_cmd)
-		local cmd, args = cmd_table[1], { table.unpack(cmd_table, 2) }
-
 		buffer_do(buf, function()
 			vim.api.nvim_buf_set_lines(buf, -1, -1, false, {
 				"[Compilation started at: " .. os.date() .. "]",
@@ -231,8 +210,8 @@ local run_compilation = function()
 
 		local timestamp = os.clock()
 
-		compilation_process_handle, _ = vim.uv.spawn(cmd, {
-			args = args,
+		compilation_process_handle, _ = vim.uv.spawn("zsh", {
+			args = { interactive and "-ic" or "-c", command },
 			stdio = { nil, stdout, stderr },
 		}, function(code, _)
 			vim.schedule(function()
@@ -295,7 +274,7 @@ local run_compilation = function()
 		)
 	end
 
-	if compile_cmd == nil or #compile_cmd == 0 then
+	if command == nil or #command == 0 then
 		update_buffer("No compilation command specified. Aborting")
 		return
 	end
@@ -308,324 +287,30 @@ local run_compilation = function()
 	run()
 end
 
-local compile = function()
-	close_all_windows()
-	last_file = vim.fn.expand("%")
+api.nvim_create_user_command("Compile", function(opts)
+	run_compilation(opts.args, opts.bang)
+	history.save_command(opts.args)
+end, {
+	nargs = "+",
+	bang = true,
+	complete = history.complete,
+})
 
-	local width = 120
-	local height = 1
-	local row = math.floor((vim.o.lines - height) / 2)
-	local col = math.floor((vim.o.columns - width) / 2)
-
-	local selected_index = 1
-	local filtered_choices = compile_command_history
-
-	-- state flag when user is switching between options
-	local is_switching = false
-
-	spawn_windows {
-		-- input_backdrop_window
-		{
-			enter = false,
-			opts = {
-				relative = "editor",
-				width = width,
-				height = height,
-				row = row,
-				col = col,
-				style = "minimal",
-				border = "rounded",
-				title = " Compile ",
-				title_pos = "center",
-			},
-			win_opts = {},
-			buf_opts = {},
-		},
-		-- input_window
-		{
-			enter = true,
-			opts = {
-				relative = "editor",
-				width = width - 3,
-				height = height,
-				row = row + 1,
-				col = col + 3,
-				style = "minimal",
-				zindex = 200,
-			},
-			win_opts = {},
-			buf_opts = {},
-		},
-	}
-
-	input_backdrop_win = recently_spawned[1].window
-	input_win, input_buf = recently_spawned[2].window, recently_spawned[2].buf
-
-	local ensure_suggestion_window = function()
-		if #filtered_choices > 0 then
-			if suggest_win ~= -1 and api.nvim_win_is_valid(suggest_win) then
-				return
-			end
-
-			spawn_windows {
-				{
-					enter = false,
-					opts = {
-						relative = "editor",
-						width = width,
-						height = #filtered_choices,
-						row = row + 3,
-						col = col,
-						style = "minimal",
-						border = "rounded",
-						title = " Recent  ",
-						title_pos = "center",
-					},
-					win_opts = {},
-					buf_opts = {},
-				},
-			}
-
-			suggest_win, suggest_buf = recently_spawned[1].window, recently_spawned[1].buf
-		elseif #filtered_choices == 0 then
-			close_windows { suggest_win }
-			suggest_win = -1
-			suggest_buf = -1
-		end
-	end
-
-	local set_selected_suggestion = function()
-		ensure_suggestion_window()
-		local lines = {}
-
-		for i, value in ipairs(filtered_choices) do
-			if i == selected_index then
-				table.insert(lines, "> " .. value)
-			else
-				table.insert(lines, "  " .. value)
-			end
-		end
-
-		buffer_do(suggest_buf, function()
-			vim.api.nvim_buf_set_lines(suggest_buf, 0, -1, false, lines)
-		end)
-	end
-
-	local send_selection_to_input = function()
-		is_switching = true
-
-		local selected_text = filtered_choices[selected_index]
-
-		if selected_text == nil or #selected_text == 0 then
-			return
-		end
-
-		buffer_do(input_buf, function()
-			vim.api.nvim_buf_set_lines(input_buf, 0, -1, false, { selected_text })
-		end)
-
-		window_do(input_win, function()
-			vim.api.nvim_win_set_cursor(input_win, { 1, #selected_text })
-		end)
-	end
-
-	local on_choose_next_option = function()
-		if #filtered_choices < 1 then
-			return
-		end
-
-		selected_index = selected_index + 1
-
-		if selected_index > #filtered_choices then
-			selected_index = 1
-		end
-
-		set_selected_suggestion()
-		send_selection_to_input()
-	end
-
-	local on_choose_previous_option = function()
-		ensure_suggestion_window()
-		if #filtered_choices < 1 then
-			return
-		end
-
-		selected_index = selected_index - 1
-
-		if selected_index == 0 then
-			selected_index = #filtered_choices
-		end
-
-		set_selected_suggestion()
-		send_selection_to_input()
-	end
-
-	local on_text_change = function()
-		if is_switching then
-			is_switching = false
-			return
-		end
-
-		local input_line_content = vim.api.nvim_get_current_line()
-		local input = input_line_content:gsub("%s*$", "")
-
-		filtered_choices = {}
-
-		if input ~= nil and #input > 0 then
-			for _, str in ipairs(compile_command_history) do
-				local match = false
-				local match_index = 1
-
-				for i = 1, #input do
-					match = false
-
-					while not match and match_index < #str + 1 do
-						if not match then
-							if input:sub(i, i) == str:sub(match_index, match_index) then
-								match = true
-							end
-
-							match_index = match_index + 1
-						end
-					end
-				end
-
-				if match then
-					table.insert(filtered_choices, str)
-				end
-			end
-		else
-			filtered_choices = compile_command_history
-		end
-
-		ensure_suggestion_window()
-		window_do(suggest_win, function()
-			vim.api.nvim_win_set_height(suggest_win, #filtered_choices)
-			set_selected_suggestion()
-		end)
-	end
-
-	local on_compile = function()
-		if not abort_input_augroup_id == nil then
-			api.nvim_del_augroup_by_id(abort_input_augroup_id)
-			abort_input_augroup_id = nil
-		end
-
-		vim.cmd("stopinsert")
-		compile_cmd = vim.api.nvim_get_current_line():gsub("%s*$", "")
-
-		if not (compile_cmd == nil or #compile_cmd == 0) then
-			local seen = false
-
-			for _, value in ipairs(compile_command_history) do
-				if value == compile_cmd then
-					seen = true
-				end
-			end
-
-			if not seen then
-				table.insert(compile_command_history, compile_cmd)
-			end
-		end
-
-		run_compilation()
-	end
-
-	local on_abort = function()
-		close_all_windows()
-		vim.cmd("stopinsert")
-	end
-
-	buffer_do(input_buf, function()
-		vim.api.nvim_buf_set_lines(input_buf, 0, -1, false, { compile_cmd .. " " })
-		vim.api.nvim_win_set_cursor(input_win, { 1, #compile_cmd + 1 })
-	end)
-
-	window_do(input_win, function()
-		vim.api.nvim_set_current_win(input_win)
-		vim.cmd("startinsert")
-	end)
-
-	set_selected_suggestion()
-
-	buffer_do(input_buf, function()
-		api.nvim_buf_set_keymap(input_buf, "i", "<Down>", "", { noremap = true, callback = on_choose_next_option })
-		api.nvim_buf_set_keymap(input_buf, "i", "<C-n>", "", { noremap = true, callback = on_choose_next_option })
-		api.nvim_buf_set_keymap(input_buf, "i", "<C-j>", "", { noremap = true, callback = on_choose_next_option })
-		api.nvim_buf_set_keymap(input_buf, "n", "<C-j>", "", { noremap = true, callback = on_choose_next_option })
-		api.nvim_buf_set_keymap(input_buf, "n", "j", "", { noremap = true, callback = on_choose_next_option })
-
-		api.nvim_buf_set_keymap(input_buf, "i", "<Up>", "", { noremap = true, callback = on_choose_previous_option })
-		api.nvim_buf_set_keymap(input_buf, "i", "<C-p>", "", { noremap = true, callback = on_choose_previous_option })
-		api.nvim_buf_set_keymap(input_buf, "i", "<C-k>", "", { noremap = true, callback = on_choose_previous_option })
-		api.nvim_buf_set_keymap(input_buf, "n", "<C-k>", "", { noremap = true, callback = on_choose_previous_option })
-		api.nvim_buf_set_keymap(input_buf, "n", "k", "", { noremap = true, callback = on_choose_previous_option })
-
-		api.nvim_buf_set_keymap(input_buf, "i", "<M-b>", "", {
-			noremap = true,
-			callback = function()
-				vim.cmd("norm B")
-				set_selected_suggestion()
-			end,
-		})
-		api.nvim_buf_set_keymap(input_buf, "i", "<M-f>", "", {
-			noremap = true,
-			callback = function()
-				vim.cmd("norm W")
-				set_selected_suggestion()
-			end,
-		})
-		api.nvim_buf_set_keymap(input_buf, "i", "<M-d>", "", {
-			noremap = true,
-			callback = function()
-				vim.cmd("norm dw")
-				set_selected_suggestion()
-			end,
-		})
-		api.nvim_buf_set_keymap(input_buf, "i", "<C-a>", "", {
-			noremap = true,
-			callback = function()
-				vim.cmd("norm 0")
-				set_selected_suggestion()
-			end,
-		})
-		api.nvim_buf_set_keymap(input_buf, "i", "<C-e>", "", {
-			noremap = true,
-			callback = function()
-				vim.cmd("norm $")
-				set_selected_suggestion()
-			end,
-		})
-		api.nvim_buf_set_keymap(input_buf, "i", "<M-BS>", "", {
-			noremap = true,
-			callback = function()
-				vim.cmd("norm dd")
-				set_selected_suggestion()
-			end,
-		})
-
-		api.nvim_buf_set_keymap(input_buf, "i", "<Tab>", "", { noremap = true, callback = send_selection_to_input })
-		api.nvim_buf_set_keymap(input_buf, "i", "<CR>", "", { noremap = true, callback = on_compile })
-		api.nvim_buf_set_keymap(input_buf, "n", "<Tab>", "", { noremap = true, callback = send_selection_to_input })
-		api.nvim_buf_set_keymap(input_buf, "n", "<CR>", "", { noremap = true, callback = on_compile })
-
-		api.nvim_buf_set_keymap(input_buf, "n", "<ESC>", "", { noremap = true, callback = on_abort })
-		api.nvim_buf_set_keymap(input_buf, "i", "<M-.>", "", {
-			noremap = true,
-			callback = function()
-				vim.cmd("norm i" .. last_file .. " ")
-				vim.cmd("norm e")
-			end,
-		})
-
-		api.nvim_create_autocmd("TextChanged", { buffer = input_buf, callback = on_text_change })
-		api.nvim_create_autocmd("TextChangedI", { buffer = input_buf, callback = on_text_change })
-	end)
-end
+api.nvim_create_user_command("Recompile", function(args)
+	run_compilation(history.last_command, false)
+end, {
+	nargs = 0,
+})
 
 M.setup = function()
-	vim.keymap.set("n", "<leader>R", compile)
-	vim.keymap.set("n", "<leader>rr", run_compilation)
+	vim.keymap.set("n", "<space><space>", function()
+		api.nvim_feedkeys(api.nvim_replace_termcodes(":Compile ", true, false, true), "n", false)
+	end)
+
+	vim.keymap.set("n", "<leader>rr", function()
+		api.nvim_command("Recompile")
+	end)
+
 	vim.keymap.set("n", "<leader>ra", abort)
 end
 
