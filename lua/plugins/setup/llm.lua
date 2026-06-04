@@ -24,7 +24,7 @@ render_markdown.setup {
 	file_types = { "markdown", "Avante" },
 }
 
-vim.treesitter.language.register("markdown", "Avante")
+-- vim.treesitter.language.register("markdown", "Avante")
 render_markdown.enable()
 
 require("avante").setup {

@@ -5,7 +5,7 @@ local Plug = vim.fn["plug#"]
 vim.call("plug#begin")
 
 Plug("nvim-lua/plenary.nvim")
-Plug("nvim-telescope/telescope.nvim", { ["tag"] = "0.1.6" })
+Plug("nvim-telescope/telescope.nvim")
 Plug("preservim/nerdtree")
 
 Plug("stevearc/oil.nvim", { ["tag"] = "v2.15.0" })
@@ -18,7 +18,7 @@ Plug("williamboman/mason.nvim")
 Plug("williamboman/mason-lspconfig.nvim")
 Plug("neovim/nvim-lspconfig")
 
-Plug("nvim-treesitter/nvim-treesitter", { ["do"] = ":TSUpdate", ["version"] = "v0.10.0" })
+Plug("nvim-treesitter/nvim-treesitter", { ["do"] = ":TSUpdate" })
 Plug("nvim-treesitter/nvim-treesitter-textobjects")
 Plug("hrsh7th/nvim-cmp")
 Plug("hrsh7th/cmp-cmdline")
@@ -71,6 +71,6 @@ Plug("m4xshen/autoclose.nvim")
 Plug("jake-stewart/multicursor.nvim")
 Plug("michaeljsmith/vim-indent-object")
 Plug("easymotion/vim-easymotion")
-Plug("nvim-orgmode/orgmode")
+-- Plug("nvim-orgmode/orgmode")
 
 vim.call("plug#end")

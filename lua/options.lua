@@ -10,6 +10,8 @@ vim.g.netrw_keepdir = 1
 vim.g.netrw_liststyle = 3
 vim.g.rainbow_active = 1
 
+vim.g.neovide_scale_factor = 0.85
+
 vim.cmd([[
   let g:rainbow_conf = {
   \	'separately': {
