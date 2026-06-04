@@ -54,11 +54,8 @@ M.setup = function()
 	end
 
 	vim.keymap.set("n", "<C-j>", duplicate_line)
-
 	vim.keymap.set("v", "<C-j>", duplicate_selection_lines)
-
 	vim.keymap.set("n", "<C-k>", duplicate_line_backwards)
-
 	vim.keymap.set("v", "<C-k>", duplicate_selection_lines_backwards)
 
 	vim.keymap.set("n", "<C-y>", function()

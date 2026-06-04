@@ -57,7 +57,7 @@ vim.keymap.set("n", "<leader>tr", function()
 	vim.api.nvim_command("NERDTreeCWD")
 end)
 
-vim.keymap.set("n", "<C-x><C-d>", function()
+vim.keymap.set("n", "<C-x>d", function()
 	vim.api.nvim_command("Oil")
 end)
 

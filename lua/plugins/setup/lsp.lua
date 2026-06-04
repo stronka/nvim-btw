@@ -202,11 +202,11 @@ vim.cmd([[
     autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
     autocmd BufRead,BufNewFile *.json set filetype=json
     autocmd FileType json setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
-    autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
-    autocmd FileType javascriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
-    autocmd FileType typescript setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
-    autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
-    autocmd FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
+    autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=2 expandtab
+    autocmd FileType javascriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=2 expandtab
+    autocmd FileType typescript setlocal shiftwidth=2 tabstop=2 softtabstop=2 expandtab
+    autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2 softtabstop=2 expandtab
+    autocmd FileType css setlocal shiftwidth=2 tabstop=2 softtabstop=2 expandtab
     autocmd FileType python set shiftwidth=4 tabstop=4 softtabstop=4 expandtab autoindent fileformat=unix
-    autocmd FileType lua setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
+    autocmd FileType lua setlocal shiftwidth=2 tabstop=2 softtabstop=2 expandtab
 ]])

@@ -20,27 +20,36 @@ telescope.setup {
 local telescope_builtin = require("telescope.builtin")
 
 local function telescope_setup()
-	vim.keymap.set("n", "<leader>fm", telescope_builtin.marks, {})
-	vim.keymap.set("n", "<leader>fk", telescope_builtin.keymaps, {})
-	vim.keymap.set("n", "<leader>fs", telescope_builtin.lsp_document_symbols, {})
-	vim.keymap.set("n", "<leader>fr", telescope_builtin.lsp_references, {})
-	vim.keymap.set("n", "<leader>fh", telescope_builtin.help_tags, {})
-	vim.keymap.set("n", "<leader>fb", telescope_builtin.buffers, {})
-	vim.keymap.set("n", "<leader>fg", telescope_builtin.live_grep, {})
-	vim.keymap.set("n", "<leader>ff", telescope_builtin.find_files, {})
-	vim.keymap.set("n", "<leader>fj", telescope_builtin.jumplist, {})
-	vim.keymap.set("n", "<leader>fo", telescope_builtin.oldfiles, {})
-	vim.keymap.set("n", "<leader>fc", telescope_builtin.command_history, {})
+	local themes = require("telescope.themes")
+
+	local function with_theme(func)
+		return function(opts)
+			func(opts)
+		end
+	end
+
+	vim.keymap.set("n", "<leader>fm", with_theme(telescope_builtin.marks), {})
+	vim.keymap.set("n", "<leader>fk", with_theme(telescope_builtin.keymaps), {})
+	vim.keymap.set("n", "<leader>fs", with_theme(telescope_builtin.lsp_document_symbols), {})
+	vim.keymap.set("n", "<leader>fr", with_theme(telescope_builtin.lsp_references), {})
+	vim.keymap.set("n", "<leader>fh", with_theme(telescope_builtin.help_tags), {})
+	vim.keymap.set("n", "<leader>fb", with_theme(telescope_builtin.buffers), {})
+	vim.keymap.set("n", "<leader>fg", with_theme(telescope_builtin.live_grep), {})
+	vim.keymap.set("n", "<leader>ff", with_theme(telescope_builtin.find_files), {})
+	vim.keymap.set("n", "<leader>fj", with_theme(telescope_builtin.jumplist), {})
+	vim.keymap.set("n", "<leader>fo", with_theme(telescope_builtin.oldfiles), {})
+	vim.keymap.set("n", "<leader>fc", with_theme(telescope_builtin.command_history), {})
+	vim.keymap.set("n", "<leader>fv", with_theme(telescope_builtin.git_status), {})
 
 	vim.keymap.set("n", "<leader>fa", function()
-		telescope_builtin.find_files {
+		with_theme(telescope_builtin.find_files) {
 			hidden = true,
 			no_ignore = true,
 		}
 	end, {})
 
 	vim.keymap.set("n", "<leader>fw", function()
-		telescope_builtin.grep_string {
+		with_theme(telescope_builtin.grep_string) {
 			search = vim.fn.expand("<cword>"),
 		}
 	end, {})

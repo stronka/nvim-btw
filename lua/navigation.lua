@@ -45,6 +45,23 @@ M.setup = function()
 	vim.cmd([[
         tnoremap <C-t><C-t> <C-\><C-n>
     ]])
+
+	-- Scroll the preview window
+	vim.keymap.set("n", "<M-u>", function()
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>P", true, false, true), "n", false)
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-u>", true, false, true), "n", false)
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>p", true, false, true), "n", false)
+	end, {
+		noremap = true,
+	})
+
+	vim.keymap.set("n", "<M-d>", function()
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>P", true, false, true), "n", false)
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-d>", true, false, true), "n", false)
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>p", true, false, true), "n", false)
+	end, {
+		noremap = true,
+	})
 end
 
 return M

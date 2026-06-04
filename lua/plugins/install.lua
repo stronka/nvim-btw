@@ -67,7 +67,6 @@ Plug("lukas-reineke/indent-blankline.nvim")
 Plug("onsails/lspkind.nvim")
 
 -- Misc
--- Plug('folke/noice.nvim', { ['tag'] = 'v4.10.0' })
 Plug("m4xshen/autoclose.nvim")
 Plug("jake-stewart/multicursor.nvim")
 Plug("michaeljsmith/vim-indent-object")
