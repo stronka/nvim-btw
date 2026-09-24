@@ -13,5 +13,6 @@ vim.keymap.set("n", "<leader>qe", function()
 end)
 
 vim.keymap.set("n", "<C-l><C-l>", function()
+	vim.cmd("nohlsearch")
 	vim.cmd("redraw")
 end)
