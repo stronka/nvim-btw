@@ -11,3 +11,7 @@ vim.keymap.set("n", "<leader>qe", function()
 	-- for quickfix edits
 	vim.opt_local.errorformat = "%f|%l col %c|%m"
 end)
+
+vim.keymap.set("n", "<C-l><C-l>", function()
+	vim.cmd("redraw")
+end)
