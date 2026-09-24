@@ -35,7 +35,7 @@ M.setup = function()
 	-- M-F7 obsolete with the refactor.nvim plugin, search to replace
 	vim.cmd([[
         nnoremap <M-F7> yiw:grep<space><C-r>"<space> 
-        nnoremap <C-l><C-l> :copen<CR>
+        nnoremap <C-l><C-o> :copen<CR>
         nnoremap <C-l><C-q> :cclose<CR>
         nnoremap <C-l><C-p> :cprevious<CR>
         nnoremap <C-l><C-n> :cnext<CR>
