@@ -38,16 +38,10 @@ Plug("saadparwaiz1/cmp_luasnip")
 Plug("lewis6991/gitsigns.nvim")
 Plug("NeogitOrg/neogit")
 
--- Avante deps
+-- potentially droppable
 Plug("stevearc/dressing.nvim")
 Plug("MunifTanjim/nui.nvim")
-Plug("MeanderingProgrammer/render-markdown.nvim")
 Plug("HakonHarnes/img-clip.nvim")
-
-Plug("yetone/avante.nvim", { ["branch"] = "main", ["do"] = "make", ["version"] = "v0.0.23" })
--- End of Avante
-
-Plug("nomnivore/ollama.nvim")
 
 -- Debugging
 Plug("mfussenegger/nvim-dap", { ["tag"] = "0.10.0" })

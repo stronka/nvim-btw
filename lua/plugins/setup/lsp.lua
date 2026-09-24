@@ -180,6 +180,7 @@ local lsp_configs = {
 	},
 	["ts_ls"] = {},
 	["rust_analyzer"] = {},
+	["clangd"] = {},
 }
 
 require("mason").setup()
@@ -197,6 +198,19 @@ for server_name, server_conf in pairs(lsp_configs) do
 	vim.lsp.enable(server_name)
 	vim.lsp.config[server_name] = conf
 end
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+    if client and client.server_capabilities.semanticTokensProvider then
+      vim.lsp.semantic_tokens.start(
+        args.buf,
+        client.id
+      )
+    end
+  end,
+})
 
 vim.cmd([[
     autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })

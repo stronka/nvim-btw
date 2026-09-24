@@ -303,7 +303,7 @@ end, {
 })
 
 M.setup = function()
-	vim.keymap.set("n", "<space><space>", function()
+	vim.keymap.set("n", "<leader>cc", function()
 		api.nvim_feedkeys(api.nvim_replace_termcodes(":Compile ", true, false, true), "n", false)
 	end)
 

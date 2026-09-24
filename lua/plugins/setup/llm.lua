@@ -1,16 +1,6 @@
 local vim = vim
 
-require("ollama").setup {
-	model = "codellama",
-	stream = true,
-	serve = {
-		command = "ollama",
-		args = { "serve" },
-		stop_command = "pkill",
-		stop_args = { "-SIGTERM", "ollama" },
-	},
-}
-
+-- remainder of avante - see what it does, maybe useful
 require("dressing").setup {
 	input = {
 		winoptions = {
@@ -19,17 +9,3 @@ require("dressing").setup {
 	},
 }
 
-local render_markdown = require("render-markdown")
-render_markdown.setup {
-	file_types = { "markdown", "Avante" },
-}
-
--- vim.treesitter.language.register("markdown", "Avante")
-render_markdown.enable()
-
-require("avante").setup {
-	provider = "claude-haiku",
-	selector = {
-		provider = "telescope",
-	},
-}
